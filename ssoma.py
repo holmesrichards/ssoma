@@ -335,47 +335,6 @@ class Solver():
                     return
         return 1
 
-    def check_solution_uniqueness_old(self, sol):
-        sol = self.reduce_solution(sol)
-        if sol in self.reduced_solutions:
-            return
-        for _ in range(3):
-            sol = self.rotatez(sol)
-            if sol in self.reduced_solutions:
-                return
-        sol = self.rotatez(sol)
-
-        for _ in range(3):
-            sol = self.rotatex(sol)
-            if sol in self.reduced_solutions:
-                return
-            for _ in range(3):
-                sol = self.rotatez(sol)
-                if sol in self.reduced_solutions:
-                    return
-            sol = self.rotatez(sol)
-        sol = self.rotatex(sol)
-        
-        sol = self.rotatez(sol) 
-        sol = self.rotatex(sol) 
-        if sol in self.reduced_solutions:
-            return
-        for _ in range(3):
-            sol = self.rotatez(sol)
-            if sol in self.reduced_solutions:
-                return
-        sol = self.rotatez(sol)
-        
-        sol = self.rotatex(sol)
-        sol = self.rotatex(sol) 
-        if sol in self.reduced_solutions:
-            return
-        for _ in range(3):
-            sol = self.rotatez(sol)
-            if sol in self.reduced_solutions:
-                return
-        return 1
-    
     def dlx_alg(self, llist, volume):
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
