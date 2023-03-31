@@ -626,7 +626,7 @@ def main():
     coords = tuple(coords)
     if len(coords) != 27 and len(coords) != 54:
         print (f"Too {'many' if (len(coords) > 27 and len(coords) < 40 or len(coords) > 54) else 'few'} cubes: {len(coords)}")
-        #return
+        return
 
     # Get dimensions of volume
     d = [0, 0, 0]
@@ -645,6 +645,7 @@ def main():
     if len(coords) == 27:
         solver = Solver(volume=volume)
     else:
+        return
         solver = Solver(volume=volume, pieces=NONSTANDARD_PIECES)
 
     solver.print_volume(solver.start_volume)
