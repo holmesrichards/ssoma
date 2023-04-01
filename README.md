@@ -5,7 +5,7 @@ A Python script to solve Soma Cube puzzles and other cube-based dissection puzzl
 Based on a Pentominoes solver by "MiniMax" ([https://codereview.stackexchange.com/questions/233300/solving-pentomino-puzzles-by-using-knuths-algorithm-x
 ](https://codereview.stackexchange.com/questions/233300/solving-pentomino-puzzles-by-using-knuths-algorithm-x)).
 
-Default behavior is to solve the cube puzzle with Soma pieces, but other models and puzzles can be specified.
+Default behavior is to solve the cube model with the Soma puzzle pieces, but other models and puzzles can be specified.
 
 Shows only solutions that are not the same under rotation or reflection (with mirror image pieces, e.g. Soma 5 and 6, interchanged).
 
