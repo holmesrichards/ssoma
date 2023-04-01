@@ -2,7 +2,7 @@
 
 """
 Soma Cube solver by Rich Holmes
-derived from Pentominos solver by MiniMax 
+derived from Pentominos solver by MiniMax
 https://codereview.stackexchange.com/questions/233300/solving-pentomino-puzzles-by-using-knuths-algorithm-x
 
 No licensing information is shown in MiniMax's listing. For my
@@ -69,7 +69,7 @@ class Linked_list_2D():
                 down_neigh = up_neigh.down
 
         new_node.up = up_neigh
-        new_node.down = down_neigh 
+        new_node.down = down_neigh
         new_node.left = left_neigh
         new_node.right = right_neigh
         # Every node has links to the first node of row and column
@@ -87,7 +87,7 @@ class Linked_list_2D():
     def print_list(self, separator=' '):
         for row in self.traverse_node_line(self.head, "down"):
             for col in self.traverse_node_line(row, "right"):
-                print(col.value, end=separator) 
+                print(col.value, end=separator)
             print()
 
     def traverse_node_line(self, start_node, direction):
@@ -178,65 +178,85 @@ class Linked_list_2D():
             if cur_node is node:
                 break
 
-class Solver():
-    SOMA_PIECES = {
+class Puzzle():
+    def __init__(self, desc, defmodel, pieces):
+        self.desc = desc
+        self.defmodel = defmodel
+        self.pieces = pieces
+        self.ncubes = 0
+        for p in pieces:
+            for plane in pieces[p]:
+                for row in plane:
+                    for cell in row:
+                        self.ncubes += 1 if cell == 1 else 0
+
+soma_puzzle = Puzzle(
+    "Soma Cube (by Piet Hein)",
+    "cube3",
+    {
         'W': (((1,1), (1,0)),),
 
         'Y': (((1,1,1), (1,0,0)),),
-        
+
         'G': (((1,1,1), (0,1,0)),),
-        
+
         'O': (((1,1,0), (0,1,1)),),
-        
+
         'L': (((1,1), (1,0)),
               ((0,0), (1,0))),
-        
+
         'R': (((1,1), (1,0)),
               ((0,1), (0,0))),
-        
+
         'B': (((1,1), (1,0)),
               ((1,0), (0,0)))
     }
+)
 
-    # For 2-set models
-
-    DOUBLE_SOMA_PIECES = {
+double_soma_puzzle = Puzzle(# For 2-set models
+    "2 sets Soma Cube",
+    "blockhouse",
+    {
         'W': (((1,1), (1,0)),),
-        
+
         'Y': (((1,1,1), (1,0,0)),),
-        
+
         'G': (((1,1,1), (0,1,0)),),
-        
+
         'O': (((1,1,0), (0,1,1)),),
-        
+
         'L': (((1,1), (1,0)),
               ((0,0), (1,0))),
-        
+
         'R': (((1,1), (1,0)),
               ((0,1), (0,0))),
-        
+
         'B': (((1,1), (1,0)),
               ((1,0), (0,0))),
-        
+
         'w': (((1,1), (1,0)),),
-        
+
         'y': (((1,1,1), (1,0,0)),),
-        
+
         'g': (((1,1,1), (0,1,0)),),
-        
+
         'o': (((1,1,0), (0,1,1)),),
-        
+
         'l': (((1,1), (1,0)),
               ((0,0), (1,0))),
-        
+
         'r': (((1,1), (1,0)),
               ((0,1), (0,0))),
-        
+
         'b': (((1,1), (1,0)),
               ((1,0), (0,0)))
     }
+)
 
-    BEDLAM_PIECES = {
+bedlam_puzzle = Puzzle(
+    "Bedlam Cube (by Bruce Bedlam)",
+    "cube4",
+    {
         '0': (((0,1,0),),
               ((1,1,1),),
               ((0,0,1),)),
@@ -266,9 +286,13 @@ class Solver():
               ((0,0,0), (1,0,0))),
         'C': (((1,0), (1,1)),
               ((0,0), (0,1))),
-        }
+    }
+)
 
-    DIABOLICAL_PIECES = {
+diabolical_puzzle = Puzzle(
+    "Diabolical Cube (pub. by Angelo Lewis)",
+    "cube3",
+    {
         '2': (((1,1),),),
         '3': (((1,1),),
               ((1,0),)),
@@ -283,9 +307,13 @@ class Solver():
         '7': (((1,1,0),),
               ((1,1,0),),
               ((1,1,1),))
-        }
+    }
+)
 
-    SG_PIECES = {
+sg_puzzle = Puzzle(
+    "Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma)",
+    "cube3",
+    {
         'a' : (((1,1), (1,1)),),
         'b' : (((1,1), (1,1)),),
         'c' : (((1,1), (1,1)),),
@@ -295,14 +323,42 @@ class Solver():
         'g' : (((1,),),),
         'h' : (((1,),),),
         'i' : (((1,),),)
-        }
+    }
+)
 
+conway_puzzle = Puzzle(
+    "Conway puzzle (Blocks-In-a-Box) (by John Conway)",
+    "cube5",
+    {
+        'a' : (((1,1,1,1), (1,1,1,1)),),
+        'b' : (((1,1,1,1), (1,1,1,1)),),
+        'c' : (((1,1,1,1), (1,1,1,1)),),
+        'd' : (((1,1,1,1), (1,1,1,1)),),
+        'e' : (((1,1,1,1), (1,1,1,1)),),
+        'f' : (((1,1,1,1), (1,1,1,1)),),
+        'g' : (((1,1,1,1), (1,1,1,1)),),
+        'h' : (((1,1,1,1), (1,1,1,1)),),
+        'i' : (((1,1,1,1), (1,1,1,1)),),
+        'j' : (((1,1,1,1), (1,1,1,1)),),
+        'k' : (((1,1,1,1), (1,1,1,1)),),
+        'l' : (((1,1,1,1), (1,1,1,1)),),
+        'm' : (((1,1,1,1), (1,1,1,1)),),
+        'n' : (((1,1), (1,1)),),
+        'o' : (((1,1), (1,1)),
+               ((1,1), (1,1)),),
+        'p' : (((1,1,1),),),
+        'q' : (((1,1,1),),),
+        'r' : (((1,1,1),),),
+    }
+)
+
+class Solver():
     named_pieces = set()
     all_piece_postures = set()
     piece_copies = {}
     piece_mirrors = {}
-    
-    def __init__(self, volume=None, height=None, depth=None, width=None, pieces=SOMA_PIECES):
+
+    def __init__(self, volume=None, height=None, depth=None, width=None, puzzle=soma_puzzle):
         if volume is None:
             volume = [[[""] * width for _ in range(depth)] for _ in range (height)]
         if height is None and width is None:
@@ -312,7 +368,7 @@ class Solver():
         self.height = height
         self.depth = depth
         self.width = width
-        self.named_pieces = set(zip(pieces.keys(), pieces.values()))
+        self.named_pieces = set(zip(puzzle.pieces.keys(), puzzle.pieces.values()))
         self.solutions = set()
         self.reduced_solutions = set()
         self.llist = None
@@ -334,7 +390,7 @@ class Solver():
                        p2[0] < spc[p1[0]]:
                         spc[p1[0]] = p2[0]
         return spc
-    
+
     def get_piece_mirrors(self):
         """
         Return dictionary of pieces that are mirrors of other pieces
@@ -347,7 +403,7 @@ class Solver():
                        p2[0] < spm[p1[0]]:
                         spm[p1[0]] = p2[0]
         return spm
-    
+
     def reduce_solution(self, sol):
         """
         Replace each piece in sol with its canonical identical piece
@@ -355,7 +411,7 @@ class Solver():
         sol2 = tuple(tuple(tuple(cell if cell not in self.piece_copies else self.piece_copies[cell] \
                   for cell in row) for row in plane) for plane in sol)
         return sol2
-    
+
     def find_solutions(self):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
@@ -363,15 +419,16 @@ class Solver():
         for line in pos_gen:
             for val in line:
                 self.llist.append(val)
-        
+
         self.delete_filled_on_start_cells(self.llist)
 
         self.starttime = time()
         self.prevtime = self.starttime
         self.dlx_alg(self.llist, self.start_volume)
+        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solutions found", 5.0, force=True)
 
         return len(self.solutions)
-    
+
     # Converts a one dimensional's element index to two dimensional's coordinates
     def num_to_coords(self, num):
         plane = num // (self.depth * self.width)
@@ -386,11 +443,11 @@ class Solver():
             if self.start_volume[plane][row][cell]:
                 llist.delete_col(col_head_node)
 
-    def print_progress(self, message, interval):
+    def print_progress(self, message, interval, force=False):
         new_time = time()
-        if (new_time - self.prevtime) >= interval:
+        if (new_time - self.prevtime) >= interval or force:
             print(message)
-            print(f"Time has elapsed: {timedelta(seconds=new_time - self.starttime)}")
+            print(f"Elapsed time: {timedelta(seconds=new_time - self.starttime)}")
             self.prevtime = new_time
 
     def check_solution_uniqueness(self, sol):
@@ -416,8 +473,8 @@ class Solver():
                 sola = self.rotatez(sola)
             sola = self.rotatex(sola)
 
-            sola = self.rotatez(sola) 
-            sola = self.rotatex(sola) 
+            sola = self.rotatez(sola)
+            sola = self.rotatex(sola)
             if sola in self.reduced_solutions:
                 return
             for _ in range(3):
@@ -427,7 +484,7 @@ class Solver():
             sola = self.rotatez(sola)
 
             sola = self.rotatex(sola)
-            sola = self.rotatex(sola) 
+            sola = self.rotatex(sola)
             if sola in self.reduced_solutions:
                 return
             for _ in range(3):
@@ -437,16 +494,14 @@ class Solver():
         return 1
 
     def dlx_alg(self, llist, volume):
+        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solutions found", 5.0)
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
-            self.print_progress(f"{self.tried_variants_num} variants have been tried", 5.0)
             self.tried_variants_num += 1
             # If no columns left - all cells are filled, the solution is found.
             if llist.head.right is llist.head:
                 solution = tuple(tuple(tuple(row) for row in plane) for plane in volume)
                 if self.check_solution_uniqueness(solution):
-                    print(f"Solution № {len(self.solutions) + 1}")
-                    self.print_volume(solution)
                     self.solutions.add(solution)
                     self.reduced_solutions.add(self.reduce_solution(solution))
                 return
@@ -516,7 +571,7 @@ class Solver():
                     print ("*" if cell == "" else cell, end="")
                 print (" / ", end = "")
             print ()
-        print("#" * 80) 
+        print("#" * 80)
 
     def unique_piece_postures(self, named_pieces):
         postures = set(named_pieces)
@@ -527,7 +582,7 @@ class Solver():
                 posture = self.rotatez(posture)
                 all_postures.add((name, posture))
             posture = self.rotatez(posture)
-            
+
             for _ in range(3):
                 posture = self.rotatex(posture)
                 all_postures.add((name, posture))
@@ -536,7 +591,7 @@ class Solver():
                     all_postures.add((name, posture))
                 posture = self.rotatez(posture)
             posture = self.rotatex(posture)
-            
+
             posture = self.rotatez(posture)
             posture = self.rotatex(posture)
             all_postures.add((name, posture))
@@ -556,7 +611,7 @@ class Solver():
     # Generates entries for all possible positions of every piece's posture.
     # Then the items of these entries will be linked into the 2 dimensional circular linked list
     # The entry looks like:
-    # piece's name  {volume cells filled by piece}  empty volume's cells 
+    # piece's name  {volume cells filled by piece}  empty volume's cells
     #            |       | | | | |                       | | |
     #            5 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ................
     def generate_positions(self, postures, width, depth, height):
@@ -602,7 +657,7 @@ class Solver():
         fig2 = tuple(tuple(tuple(cell if cell not in self.piece_mirrors else self.piece_mirrors[cell] \
                                  for cell in row) for row in plane) for plane in fig[::-1])
         return fig2
-                            
+
     def rotatez(self, fig):
         return tuple(zip(*fig[::-1]))
 
@@ -666,7 +721,7 @@ model_dict = {
         (".....", ".***."),
         (".....", ".***."),
         (".....", ".*.*.")
-    ),  # only 1 solution    
+    ),  # only 1 solution
 
     "blockhouse":  # 2 sets
     (
@@ -688,7 +743,7 @@ model_dict = {
         ("............", ".***....***."),
         ("............", ".***....***."),
         ("............", ".*.*....*.*.")  # should be 3 solutions
-    ),  # only 1 solution    
+    ),  # only 1 solution
 
     "cube4":  # Bedlam Cube
     (
@@ -696,6 +751,15 @@ model_dict = {
         ("****", "****", "****", "****"),
         ("****", "****", "****", "****"),
         ("****", "****", "****", "****")
+    ),  # should be  solutions
+
+    "cube5":  # Conway
+    (
+        ("*****", "*****", "*****", "*****", "*****"),
+        ("*****", "*****", "*****", "*****", "*****"),
+        ("*****", "*****", "*****", "*****", "*****"),
+        ("*****", "*****", "*****", "*****", "*****"),
+        ("*****", "*****", "*****", "*****", "*****")
     )  # should be  solutions
 }
 
@@ -705,17 +769,69 @@ def models (name):
         return model_dict[name]
     else:
         return None
-    
+
+def readmodel (filename):
+
+    m = []
+    try:
+        with open (filename, "r") as f:
+            for l in f:
+                m.append(l.strip())
+    except:
+        print (f"Could not read {filename}")
+        return None
+
+    nplanes = 0
+    for mi in m:
+        plane = 0
+        for c in mi:
+            if c == "/":
+                plane += 1
+        if plane >= nplanes:
+            nplanes = plane+1
+
+    cl = []
+    row = 0
+    for mi in reversed(m):
+        plane = nplanes-1
+        cell = 0
+        for c in mi:
+            if c == "*":
+                cl.append((cell, row, plane))
+                cell += 1
+            elif c == ".":
+                cell += 1
+            elif c == "/":
+                cell = 0
+                plane -= 1
+        row += 1
+    return tuple(cl)
+
+def parsemodel (modelname):
+    mdl = models (modelname)
+    if mdl == None:
+        print (f"Unknown model {modelname}")
+        return
+
+    coords = []
+    for y in range(len(mdl)):
+        row_set = mdl[y]
+        for z in range(len(row_set)):
+            row = row_set[z]
+            for x in range(len(row)):
+                if mdl[y][z][x] == "*":
+                    coords.append((x, len(mdl)-y-1, len(row_set)-z-1))
+    return tuple(coords)
+
 def main():
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument (
-        'model',
+        'model_file',
         type=str,
-        nargs = "?",
-        default = "cube3",
-        help="Model to be solved, default = 'cube3'")
+        nargs="?",
+        help="File with model to be solved")
 
     parser.add_argument (
         '-p', '--puzzle',
@@ -725,56 +841,51 @@ def main():
         help="Puzzle to be used, default = 'soma'; list puzzles if no argument")
 
     parser.add_argument (
-        '-m', '--models',
-        action="store_true",
-        help="List builtin models")
+        '-m', '--model',
+        type=str,
+        nargs="?",
+        default="_def",
+        help="Builtin model to be solved, default depends on puzzle, list models if no argument")
 
     args = parser.parse_args()
 
-    if args.models:
+    puzzle_dict = {
+        "soma": soma_puzzle,
+        "double_soma": double_soma_puzzle,
+        "bedlam": bedlam_puzzle,
+        "diabolical": diabolical_puzzle,
+        "sg": sg_puzzle,
+        "conway": conway_puzzle,
+    }
+
+    puzzle_name = args.puzzle
+    if puzzle_name == None:
+        for p in puzzle_dict:
+            print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes)")
+        return
+    elif puzzle_name not in puzzle_dict:
+        print (f"Unknown puzzle {puzzle_name}")
+        return
+    puzzle = puzzle_dict[puzzle_name]
+
+    # Convert pattern to cartesian coordinates
+
+    coords = []
+    if args.model_file:
+        coords = readmodel (args.model_file)
+    elif args.model == None:
         for m in model_dict:
             print (f"  {m}")
         return
-
-    puzzle_dict = {
-        "soma": [27, None, "Soma Cube (by Piet Hein)"],
-        "double_soma": [54, Solver.DOUBLE_SOMA_PIECES, "2 sets Soma Cube"],
-        "bedlam": [64, Solver.BEDLAM_PIECES, "Bedlam Cube (by Bruce Bedlam)"],
-        "diabolical": [27, Solver.DIABOLICAL_PIECES, "Diabolical Cube (pub. by Angelo Lewis)"],
-        "sg": [27, Solver.SG_PIECES, "Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma)"],
-    }
-    
-    start = models (args.model)
-    if start == None:
-        print (f"Unknown model {args.model}")
-        return
-    
-    puzzle = args.puzzle
-    if puzzle == None:
-        for p in puzzle_dict:
-            print (f"  {p:15} {puzzle_dict[p][2]}")
-        return
-    elif puzzle not in puzzle_dict:
-        print (f"Unknown puzzle {puzzle}")
-        return
+    elif args.model == "_def":
+        coords = parsemodel (puzzle.defmodel)
     else:
-        puz_stuf = puzzle_dict[puzzle]
-    
-    # Convert pattern to cartesian coordinates
-    coords = []
-    for y in range(len(start)):
-        row_set = start[y]
-        for z in range(len(row_set)):
-            row = row_set[z]
-            for x in range(len(row)):
-                if start[y][z][x] == "*":
-                    coords.append((x, len(start)-y-1, len(row_set)-z-1))
-    coords = tuple(coords)
+        coords = parsemodel (args.model)
 
-    expnum = puz_stuf[0]    
+    expnum = puzzle.ncubes
     fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
     if fewmany != "":
-        print (f"{args.model} has too {fewmany} cubes for {puzzle}: {len(coords)}")
+        print (f"{model} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
         return
 
     # Get dimensions of volume
@@ -789,15 +900,19 @@ def main():
     for c in coords:
         volume[c[0]][c[1]][c[2]] = ""
 
-    if puz_stuf[1] == None:
-        solver = Solver(volume=volume)
-    else:
-        solver = Solver(volume=volume, pieces=puz_stuf[1])
-    
+    solver = Solver(volume=volume, puzzle=puzzle)
+
     solver.print_volume(solver.start_volume)
     n = solver.find_solutions()
     if n == 0:
-        print ("*** No solutions")
+        print ("*** No solutions found")
+    else:
+        print (f"*** {n} solution{'' if n==1 else 's'} found")
+        i = 0
+        for s in solver.solutions:
+            i += 1
+            print(f"Solution № {i}")
+            solver.print_volume(s)
 
 if __name__ == "__main__":
     main()
