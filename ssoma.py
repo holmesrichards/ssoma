@@ -563,12 +563,12 @@ class Solver():
                 new_volume[plane][row][cell] = node.row_head.value
         return new_volume
 
-    def print_volume(self, volume):
+    def print_volume(self, volume, dict={}):
         for y in range (len(volume[0])-1,-1,-1):
             for z in range(len(volume[0][0])-1,-1,-1):
                 for x in range (len(volume)):
                     cell = volume[x][y][z]
-                    print ("*" if cell == "" else cell, end="")
+                    print ("*" if cell == "" else dict[cell] if cell in dict else cell, end="")
                 print (" / ", end = "")
             print ()
         print("#" * 80)
@@ -847,6 +847,12 @@ def main():
         default="_def",
         help="Builtin model to be solved, default depends on puzzle, list models if no argument")
 
+    parser.add_argument (
+        '-n', '--notation',
+        type=str,
+        default="ww",
+        help="(For soma/double_soma) Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default)")
+
     args = parser.parse_args()
 
     puzzle_dict = {
@@ -888,6 +894,15 @@ def main():
         print (f"{model} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
         return
 
+    notation = {}
+    if puzzle_name == "soma" or puzzle_name == "double_soma":
+        if args.notation == 'num':
+            notation = {"W": 1, "Y": 2, "G": 3, "O": 4, "L": 5, "R": 6, "B": 7,
+                        "w": 1, "y": 2, "g": 3, "o": 4, "l": 5, "r": 6, "b": 7}
+        elif args.notation == 'somap':
+            notation = {"W": "B", "L": "U", "B": "A",
+                        "w": "b", "l": "u", "b": "a"}
+
     # Get dimensions of volume
     d = [0, 0, 0]
     for c in coords:
@@ -903,7 +918,12 @@ def main():
     solver = Solver(volume=volume, puzzle=puzzle)
 
     solver.print_volume(solver.start_volume)
-    n = solver.find_solutions()
+    try:
+        solver.find_solutions()
+    except:
+        print ("*** Terminated")
+        
+    n = len(solver.solutions)
     if n == 0:
         print ("*** No solutions found")
     else:
@@ -912,7 +932,7 @@ def main():
         for s in solver.solutions:
             i += 1
             print(f"Solution № {i}")
-            solver.print_volume(s)
+            solver.print_volume(s, notation)
 
 if __name__ == "__main__":
     main()
