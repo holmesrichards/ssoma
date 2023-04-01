@@ -120,3 +120,6 @@ B...L / BBRRL /
 
 First is shown the model. Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." is a cubical void.
 After this, every 5 seconds and at end of analysis a status update line is printed. At end of analysis all solutions are printed.
+
+You can terminate running with `CTRL-C` and partial results will be shown.
+

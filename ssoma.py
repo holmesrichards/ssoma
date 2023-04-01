@@ -425,7 +425,6 @@ class Solver():
         self.starttime = time()
         self.prevtime = self.starttime
         self.dlx_alg(self.llist, self.start_volume)
-        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solutions found", 5.0, force=True)
 
         return len(self.solutions)
 
@@ -852,7 +851,7 @@ def main():
     puzzle_name = args.puzzle
     if puzzle_name == None:
         for p in puzzle_dict:
-            print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes)")
+            print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes, default model {puzzle_dict[p].defmodel})")
         return
     elif puzzle_name not in puzzle_dict:
         print (f"Unknown puzzle {puzzle_name}")
@@ -908,6 +907,7 @@ def main():
     except:
         print ("*** Terminated")
         
+    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {len(solver.solutions)} solutions found", 5.0, force=True)
     n = len(solver.solutions)
     i = 0
     for s in solver.solutions:
