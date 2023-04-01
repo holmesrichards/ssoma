@@ -26,7 +26,8 @@ options:
   -m [MODEL], --model [MODEL]
                         Builtin model to be solved, default depends on puzzle, list models if no argument
   -n NOTATION, --notation NOTATION
-                        (For soma/double_soma) Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default)
+                        For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)
+  -c, --colors          Colorize model printouts when possible
 ```
 
 Puzzles that can be specified with the `-p` argument are:
@@ -78,7 +79,7 @@ For Soma, notations that can be specified with the `-n` argument are as follows:
 | 6  | R = Red  | R = Red |
 | 7  | A = blAck | B = Black |
 
-For double set Soma puzzles, alphabetic notation is repeated with lowercase letters for the second set; numeric re-uses numbers.
+For double set Soma puzzles, alphabetic notation is repeated with lowercase letters for the second set; numeric re-uses numbers. When `somap` or `ww` notations are used, the `-c` argument enables colorizing the outputs to mostly match the notation. (Brown and orange colors are unavailable on most terminals so the corresponding letters are arbitrarily assigned different colors.)
 
 For Pentominoes, there are two notations:
 
@@ -111,7 +112,7 @@ Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." 
 
 ## Output
 
-Output looks like this:
+(Uncolorized) Output looks like this:
 
 ```
 $ python3 ssoma.py -m gorilla

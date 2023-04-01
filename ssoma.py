@@ -32,6 +32,7 @@ from time import time
 from datetime import timedelta
 from copy import deepcopy
 import argparse
+from termcolor import colored
 
 class Node():
     def __init__(self, value):
@@ -580,12 +581,21 @@ class Solver():
                 new_volume[plane][row][cell] = node.row_head.value
         return new_volume
 
-    def print_volume(self, volume, dict={}):
+    def print_volume(self, volume, notation={}, colors={}):
         for y in range (len(volume[0])-1,-1,-1):
             for z in range(len(volume[0][0])-1,-1,-1):
                 for x in range (len(volume)):
                     cell = volume[x][y][z]
-                    print ("*" if cell == "" else dict[cell] if cell in dict else cell, end="")
+                    if cell == "":
+                        nc = colored ("*", "grey", "on_white") if colors != {} else "*"
+                    else:
+                        nc = notation[cell] if cell in notation else cell
+                        if colors != {}:
+                            if cell in colors:
+                                nc = colored (nc, colors[cell][0], colors[cell][1])
+                            else:
+                                nc = colored (nc, "grey", "on_white")
+                    print (nc, end="")
                 print (" / ", end = "")
             print ()
         print("#" * 80)
@@ -861,6 +871,12 @@ def main():
         default="ww",
         help="For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)")
 
+    parser.add_argument (
+        '-c', '--colors',
+        action = "store_true",
+        help = "Colorize model printouts when possible"
+        )
+
     args = parser.parse_args()
 
     puzzle_dict = {
@@ -904,16 +920,42 @@ def main():
         return
 
     notation = {}
+    colors = {}
     if puzzle_name == "soma" or puzzle_name == "double_soma":
+        notation = {}
+        if args.colors:
+            colors = {"W": ["white", "on_grey"], "Y": ["yellow", "on_white"], "G": ["green", "on_white"],
+                      "O": ["yellow", "on_grey"], "L": ["blue", "on_white"], "R": ["red", "on_white"],
+                      "B": ["grey", "on_white"],
+                      "w": ["white", "on_grey"], "y": ["yellow", "on_white"], "g": ["green", "on_white"],
+                      "o": ["yellow", "on_grey"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
+                      "b": ["grey", "on_white"],
+                      }
         if args.notation == 'num':
             notation = {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7",
                         "w": "1", "y": "2", "g": "3", "o": "4", "l": "5", "r": "6", "b": "7"}
         elif args.notation == 'somap':
             notation = {"W": "B", "L": "U", "B": "A",
                         "w": "b", "l": "u", "b": "a"}
+            if args.colors:
+                colors = {"W": ["magenta", "on_grey"], "Y": ["yellow", "on_white"], "G": ["green", "on_white"],
+                          "O": ["yellow", "on_grey"], "L": ["blue", "on_white"], "R": ["red", "on_white"],
+                          "B": ["grey", "on_white"],
+                          "w": ["magenta", "on_grey"], "y": ["yellow", "on_white"], "g": ["green", "on_white"],
+                          "o": ["yellow", "on_white"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
+                          "b": ["grey", "on_white"],
+                          }
+        elif args.notation == "ww":
+            pass
+        else:
+            print (f"*** Unrecognized notation '{args.notation}' ignored")
     elif puzzle_name == "pentominoes":
         if args.notation == 'con':
             notation = {"F": "R", "I": "O", "L": "Q", "N": "S"}
+        elif args.notation == "gol":
+            notation = {}
+        else:
+            print (f"*** Unrecognized notation '{args.notation}' ignored")
     
     # Get dimensions of volume
     d = [0, 0, 0]
@@ -941,7 +983,7 @@ def main():
     for s in solver.solutions:
         i += 1
         print(f"Solution № {i}")
-        solver.print_volume(s, notation)
+        solver.print_volume(s, notation, colors)
 
 if __name__ == "__main__":
     main()
