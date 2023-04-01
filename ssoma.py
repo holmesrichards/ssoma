@@ -352,6 +352,25 @@ conway_puzzle = Puzzle(
     }
 )
 
+pentomino_puzzle = Puzzle(
+    "Solid Pentominoes (by Solomon Golomb)",
+    "r06x10",
+    {
+        'F' : (((0,1,1), (1,1,0), (0,1,0),),),
+        'I' : (((1,1,1,1,1),),),
+        'L' : (((1,1,1,1), (1,0,0,0),),),
+        'N' : (((1,1,0,0), (0,1,1,1),),),
+        'P' : (((1,1), (1,1), (1,0),),),
+        'T' : (((1,1,1), (0,1,0), (0,1,0),),),
+        'U' : (((1,0,1), (1,1,1),),),
+        'V' : (((1,0,0), (1,0,0), (1,1,1),),),
+        'W' : (((1,0,0), (1,1,0), (0,1,1),),),
+        'X' : (((0,1,0), (1,1,1), (0,1,0),),),
+        'Y' : (((0,0,1,0), (1,1,1,1),),),
+        'Z' : (((1,1,0), (0,1,0), (0,1,1),),),
+    }
+)
+
 class Solver():
     named_pieces = set()
     all_piece_postures = set()
@@ -675,76 +694,78 @@ class Solver():
 # on the right.
 
 model_dict = {
-    "cube3":
-    (
-        ("***", "***", "***"),
-        ("***", "***", "***"),
-        ("***", "***", "***")
-    ),  # should be 240 soma solutions, 13 diabolical, 1 sg
+    "cube3": """
+*** / *** / ***
+*** / *** / ***
+*** / *** / ***
+""",      # should be 240 soma solutions, 13 diabolical, 1 sg
 
-    "piano":
-    (
-        (".***.", "*****", "*****", "*****"),
-        (".....", "*...*", "*****", "*...*")
-    ),
+    "piano": """
+.***. / ***** / ***** / *****
+..... / *...* / ***** / *...*
+""",
 
-    "giraffe":
-    (
-        ("....", "....", "....", "....", "....", "....", ".*.*"),
-        (".*..", ".*..", ".*..", ".*..", ".*..", ".***", ".***"),
-        ("**..", ".*..", ".*..", ".*..", ".*..", ".***", ".***"),
-        ("....", "....", "....", "....", "....", "....", ".*.*")
-    ),  # I find no solutions
+    "giraffe": """
+.... / .... / .... / .... / .... / .... / .*.*
+.*.. / .*.. / .*.. / .*.. / .*.. / .*** / .***
+**.. / .*.. / .*.. / .*.. / .*.. / .*** / .***
+.... / .... / .... / .... / .... / .... / .*.*
+""",  # I find no solutions
 
-    "gorilla":
-    (
-        ("..*..", "..*.."),
-        ("*...*", "*****"),
-        (".....", "*****"),
-        (".....", "*****"),
-        (".....", ".***."),
-        (".....", ".***."),
-        (".....", ".*.*.")
-    ),  # only 1 solution
+    "gorilla": """
+..*.. / ..*..
+*...* / *****
+..... / *****
+..... / *****
+..... / .***.
+..... / .***.
+..... / .*.*.
+""",  # only 1 solution
 
-    "blockhouse":  # 2 sets
-    (
-        (".......", "...*..."),
-        (".*****.", ".*****."),
-        (".*****.", ".*****."),
-        (".*****.", "*******"),
-        (".*****.", ".*****."),
-        (".*****.", ".*****."),
-        (".......", "...*..."),
-    ),
+    "blockhouse": """
+....... / ...*...
+.*****. / .*****.
+.*****. / .*****.
+.*****. / *******
+.*****. / .*****.
+.*****. / .*****.
+....... / ...*...
+""",  # 2 sets
 
-    "gorillas":  # 2 sets
-    (
-        ("..*......*..", "..*......*.."),
-        ("*...*..*...*", "*****..*****"),
-        ("............", "*****..*****"),
-        ("............", "*****..*****"),
-        ("............", ".***....***."),
-        ("............", ".***....***."),
-        ("............", ".*.*....*.*.")  # should be 3 solutions
-    ),  # only 1 solution
+    "gorillas": """
+..*......*.. / ..*......*..
+*...*..*...* / *****..*****
+............ / *****..*****
+............ / *****..*****
+............ / .***....***.
+............ / .***....***.
+............ / .*.*....*.*.
+""",  # 2 sets, should be 3 solutions
 
-    "cube4":  # Bedlam Cube
-    (
-        ("****", "****", "****", "****"),
-        ("****", "****", "****", "****"),
-        ("****", "****", "****", "****"),
-        ("****", "****", "****", "****")
-    ),  # should be  solutions
+    "cube4":  """
+**** / **** / **** / ****
+**** / **** / **** / ****
+**** / **** / **** / ****
+**** / **** / **** / ****
+""",  # Bedlam Cube, should be  solutions
 
-    "cube5":  # Conway
-    (
-        ("*****", "*****", "*****", "*****", "*****"),
-        ("*****", "*****", "*****", "*****", "*****"),
-        ("*****", "*****", "*****", "*****", "*****"),
-        ("*****", "*****", "*****", "*****", "*****"),
-        ("*****", "*****", "*****", "*****", "*****")
-    )  # should be  solutions
+    "cube5": """
+***** / ***** / ***** / ***** / *****
+***** / ***** / ***** / ***** / *****
+***** / ***** / ***** / ***** / *****
+***** / ***** / ***** / ***** / *****
+***** / ***** / ***** / ***** / *****
+""",    # Conway, should be  solutions
+
+    "r06x10": """
+**********
+**********
+**********
+**********
+**********
+**********
+""" # Pentominoes
+
 }
 
 def models (name):
@@ -754,42 +775,53 @@ def models (name):
     else:
         return None
 
-def readmodel (filename):
+def string_to_coords (strng):
+    """
+Convert string to tuple of coordinates
+"""
+    nplanes = 0
+    plane = 0
+    nrows = 0
+    ncells = 0
+    for c in strng.strip()+"\n":
+        if c == "\n":
+            nrows += 1
+            if plane >= nplanes and ncells > 0:
+                nplanes = plane + 1
+            plane = 0
+        elif c == "/":
+            plane += 1
+        elif c == "*" or c == ".":
+            ncells += 1
+            
+    cl = []
+    plane = nplanes-1
+    row = nrows-1
+    cell = 0
+    for c in strng.strip()+"\n":
+        if c == "\n":
+            plane = nplanes-1
+            row -= 1
+            cell = 0
+        elif c == "/":
+            plane -= 1
+            cell = 0
+        elif c == "*" or c == ".":
+            if c == "*":
+                cl.append((cell, row, plane))
+            cell += 1
 
+    return tuple(cl)
+
+def readmodel (filename):
     m = []
     try:
         with open (filename, "r") as f:
-            for l in f:
-                m.append(l.strip())
+            strng = "".join(f.readlines())
     except:
         print (f"Could not read {filename}")
         return None
-
-    nplanes = 0
-    for mi in m:
-        plane = 0
-        for c in mi:
-            if c == "/":
-                plane += 1
-        if plane >= nplanes:
-            nplanes = plane+1
-
-    cl = []
-    row = 0
-    for mi in reversed(m):
-        plane = nplanes-1
-        cell = 0
-        for c in mi:
-            if c == "*":
-                cl.append((cell, row, plane))
-                cell += 1
-            elif c == ".":
-                cell += 1
-            elif c == "/":
-                cell = 0
-                plane -= 1
-        row += 1
-    return tuple(cl)
+    return string_to_coords(strng)
 
 def parsemodel (modelname):
     mdl = models (modelname)
@@ -797,15 +829,7 @@ def parsemodel (modelname):
         print (f"Unknown model {modelname}")
         return
 
-    coords = []
-    for y in range(len(mdl)):
-        row_set = mdl[y]
-        for z in range(len(row_set)):
-            row = row_set[z]
-            for x in range(len(row)):
-                if mdl[y][z][x] == "*":
-                    coords.append((x, len(mdl)-y-1, len(row_set)-z-1))
-    return tuple(coords)
+    return string_to_coords (mdl)
 
 def main():
 
@@ -846,6 +870,7 @@ def main():
         "diabolical": diabolical_puzzle,
         "sg": sg_puzzle,
         "conway": conway_puzzle,
+        "pentominoes": pentomino_puzzle,
     }
 
     puzzle_name = args.puzzle
