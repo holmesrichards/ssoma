@@ -764,7 +764,7 @@ model_dict = {
 **********
 **********
 **********
-""" # Pentominoes
+""" # Pentominoes, should be 2339 solutions
 
 }
 
@@ -859,7 +859,7 @@ def main():
         '-n', '--notation',
         type=str,
         default="ww",
-        help="(For soma/double_soma) Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default)")
+        help="For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)")
 
     args = parser.parse_args()
 
@@ -906,12 +906,15 @@ def main():
     notation = {}
     if puzzle_name == "soma" or puzzle_name == "double_soma":
         if args.notation == 'num':
-            notation = {"W": 1, "Y": 2, "G": 3, "O": 4, "L": 5, "R": 6, "B": 7,
-                        "w": 1, "y": 2, "g": 3, "o": 4, "l": 5, "r": 6, "b": 7}
+            notation = {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7",
+                        "w": "1", "y": "2", "g": "3", "o": "4", "l": "5", "r": "6", "b": "7"}
         elif args.notation == 'somap':
             notation = {"W": "B", "L": "U", "B": "A",
                         "w": "b", "l": "u", "b": "a"}
-
+    elif puzzle_name == "pentominoes":
+        if args.notation == 'con':
+            notation = {"F": "R", "I": "O", "L": "Q", "N": "S"}
+    
     # Get dimensions of volume
     d = [0, 0, 0]
     for c in coords:

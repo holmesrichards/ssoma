@@ -80,6 +80,23 @@ For Soma, notations that can be specified with the `-n` argument are as follows:
 
 For double set Soma puzzles, alphabetic notation is repeated with lowercase letters for the second set; numeric re-uses numbers.
 
+For Pentominoes, there are two notations:
+
+|Golomb|Conway|
+|----|----|
+|F|R|
+|I|O|
+|L|Q|
+|N|S|
+|P|P|
+|T|T|
+|U|U|
+|V|V|
+|W|W|
+|X|X|
+|Y|Y|
+|Z|Z|
+
 ## Input
 
 The model can be specified in an input file, looking like this:
