@@ -446,8 +446,7 @@ class Solver():
     def print_progress(self, message, interval, force=False):
         new_time = time()
         if (new_time - self.prevtime) >= interval or force:
-            print(message)
-            print(f"Elapsed time: {timedelta(seconds=new_time - self.starttime)}")
+            print(f"Elapsed time: {timedelta(seconds=new_time - self.starttime)} / {message}")
             self.prevtime = new_time
 
     def check_solution_uniqueness(self, sol):
@@ -698,20 +697,6 @@ model_dict = {
         ("....", "....", "....", "....", "....", "....", ".*.*")
     ),  # I find no solutions
 
-    "grand_piano":
-    (
-        ("..***.", "..****"),
-        (".****.", ".*****"),
-        ("*****.", "******")
-    ),
-
-    "teddy_bear":
-    (
-        ("**.", "**.", "***", "**.", "**.", "***"),
-        ("*..", "**.", "**.", "**.", "**.", "**."),
-        ("...", "...", "*..", "...", "...", "*..")
-    ),
-
     "gorilla":
     (
         ("..*..", "..*.."),
@@ -924,15 +909,11 @@ def main():
         print ("*** Terminated")
         
     n = len(solver.solutions)
-    if n == 0:
-        print ("*** No solutions found")
-    else:
-        print (f"*** {n} solution{'' if n==1 else 's'} found")
-        i = 0
-        for s in solver.solutions:
-            i += 1
-            print(f"Solution № {i}")
-            solver.print_volume(s, notation)
+    i = 0
+    for s in solver.solutions:
+        i += 1
+        print(f"Solution № {i}")
+        solver.print_volume(s, notation)
 
 if __name__ == "__main__":
     main()
