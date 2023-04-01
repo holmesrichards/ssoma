@@ -512,7 +512,7 @@ class Solver():
         return 1
 
     def dlx_alg(self, llist, volume):
-        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solutions found", 5.0)
+        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'s' if len(self.solutions) > 1 else ''} found", 5.0)
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
             self.tried_variants_num += 1
@@ -977,7 +977,7 @@ def main():
     except:
         print ("*** Terminated")
         
-    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {len(solver.solutions)} solutions found", 5.0, force=True)
+    self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'s' if len(self.solutions) > 1 else ''} found", 5.0, force=True)
     n = len(solver.solutions)
     i = 0
     for s in solver.solutions:
