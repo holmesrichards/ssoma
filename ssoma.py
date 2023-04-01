@@ -31,6 +31,7 @@ algorithm.)
 from time import time
 from datetime import timedelta
 from copy import deepcopy
+import argparse
 
 class Node():
     def __init__(self, value):
@@ -178,30 +179,130 @@ class Linked_list_2D():
                 break
 
 class Solver():
-    STANDARD_PIECES = {'W': (((1,1), (1,0)),),
+    SOMA_PIECES = {
+        'W': (((1,1), (1,0)),),
 
-                       'Y': (((1,1,1), (1,0,0)),),
+        'Y': (((1,1,1), (1,0,0)),),
+        
+        'G': (((1,1,1), (0,1,0)),),
+        
+        'O': (((1,1,0), (0,1,1)),),
+        
+        'L': (((1,1), (1,0)),
+              ((0,0), (1,0))),
+        
+        'R': (((1,1), (1,0)),
+              ((0,1), (0,0))),
+        
+        'B': (((1,1), (1,0)),
+              ((1,0), (0,0)))
+    }
 
-                       'G': (((1,1,1), (0,1,0)),),
+    # For 2-set models
 
-                       'O': (((1,1,0), (0,1,1)),),
+    DOUBLE_SOMA_PIECES = {
+        'W': (((1,1), (1,0)),),
+        
+        'Y': (((1,1,1), (1,0,0)),),
+        
+        'G': (((1,1,1), (0,1,0)),),
+        
+        'O': (((1,1,0), (0,1,1)),),
+        
+        'L': (((1,1), (1,0)),
+              ((0,0), (1,0))),
+        
+        'R': (((1,1), (1,0)),
+              ((0,1), (0,0))),
+        
+        'B': (((1,1), (1,0)),
+              ((1,0), (0,0))),
+        
+        'w': (((1,1), (1,0)),),
+        
+        'y': (((1,1,1), (1,0,0)),),
+        
+        'g': (((1,1,1), (0,1,0)),),
+        
+        'o': (((1,1,0), (0,1,1)),),
+        
+        'l': (((1,1), (1,0)),
+              ((0,0), (1,0))),
+        
+        'r': (((1,1), (1,0)),
+              ((0,1), (0,0))),
+        
+        'b': (((1,1), (1,0)),
+              ((1,0), (0,0)))
+    }
 
-                       'L': (((1,1), (1,0)),
-                             ((0,0), (1,0))),
-                        
-                       'R': (((1,1), (1,0)),
-                             ((0,1), (0,0))),
+    BEDLAM_PIECES = {
+        '0': (((0,1,0),),
+              ((1,1,1),),
+              ((0,0,1),)),
+        '1': (((0,1,0),),
+              ((1,1,1),),
+              ((0,1,0),)),
+        '2': (((1,1,0),),
+              ((0,1,1),),
+              ((0,0,1),)),
+        '3': (((0,0,1), (0,1,1)),
+              ((0,0,0), (1,1,0))),
+        '4': (((0,1,0), (1,1,1)),
+              ((0,0,0), (0,1,0))),
+        '5': (((0,1,0), (0,1,1)),
+              ((0,0,0), (1,1,0))),
+        '6': (((0,1,0), (0,1,0)),
+              ((0,0,0), (1,1,1))),
+        '7': (((1,0,0), (1,1,1)),
+              ((0,0,0), (1,0,0))),
+        '8': (((0,0,1), (1,1,1)),
+              ((0,0,0), (1,0,0))),
+        '9': (((0,0,0), (1,1,1)),
+              ((0,0,1), (0,0,1))),
+        'A': (((0,0,0), (0,1,1)),
+              ((1,1,0), (0,1,0))),
+        'B': (((0,1,0), (1,1,1)),
+              ((0,0,0), (1,0,0))),
+        'C': (((1,0), (1,1)),
+              ((0,0), (0,1))),
+        }
 
-                       'B': (((1,1), (1,0)),
-                             ((1,0), (0,0)))
-                       }
-                        
+    DIABOLICAL_PIECES = {
+        '2': (((1,1),),),
+        '3': (((1,1),),
+              ((1,0),)),
+        '4': (((1,1),),
+              ((1,1),)),
+        '5': (((1,1),),
+              ((1,0),),
+              ((1,1),)),
+        '6': (((1,1,1),),
+              ((1,1,0),),
+              ((1,0,0),)),
+        '7': (((1,1,0),),
+              ((1,1,0),),
+              ((1,1,1),))
+        }
+
+    SG_PIECES = {
+        'a' : (((1,1), (1,1)),),
+        'b' : (((1,1), (1,1)),),
+        'c' : (((1,1), (1,1)),),
+        'd' : (((1,1), (1,1)),),
+        'e' : (((1,1), (1,1)),),
+        'f' : (((1,1), (1,1)),),
+        'g' : (((1,),),),
+        'h' : (((1,),),),
+        'i' : (((1,),),)
+        }
+
     named_pieces = set()
     all_piece_postures = set()
     piece_copies = {}
     piece_mirrors = {}
     
-    def __init__(self, volume=None, height=None, depth=None, width=None, pieces=STANDARD_PIECES):
+    def __init__(self, volume=None, height=None, depth=None, width=None, pieces=SOMA_PIECES):
         if volume is None:
             volume = [[[""] * width for _ in range(depth)] for _ in range (height)]
         if height is None and width is None:
@@ -508,88 +609,56 @@ class Solver():
     def rotatex(self, fig):
         return tuple(tuple(zip(*fig[i][::-1])) for i in range(len(fig)))
 
-def main():
+# Some models to build
 
-    # For 2-set models
+# In these patterns each entry is a set of rows, with vertically
+# aligned rows forming a plane
+# Number of entries is depth, entries in each entry is height,
+# len of each string is width.
+# x increases across len of string
+# y decreases across pattern
+# z decreases across row_set
+# So what you see here is the top plane on the left, bottom plane
+# on the right.
 
-    # Code as it stands counts any solutions that differ only in
-    # exhange of (e.g.)
-    # W for w as different, so there are huge numbers of solutions
-    # reported.
-    
-    NONSTANDARD_PIECES = {'W': (((1,1), (1,0)),),
-                          
-                          'Y': (((1,1,1), (1,0,0)),),
-                          
-                          'G': (((1,1,1), (0,1,0)),),
-                          
-                          'O': (((1,1,0), (0,1,1)),),
-                          
-                          'L': (((1,1), (1,0)),
-                                ((0,0), (1,0))),
-                          
-                          'R': (((1,1), (1,0)),
-                                ((0,1), (0,0))),
-                          
-                          'B': (((1,1), (1,0)),
-                                ((1,0), (0,0))),
-                          
-                          'w': (((1,1), (1,0)),),
-                          
-                          'y': (((1,1,1), (1,0,0)),),
-                          
-                          'g': (((1,1,1), (0,1,0)),),
-                          
-                          'o': (((1,1,0), (0,1,1)),),
-                          
-                          'l': (((1,1), (1,0)),
-                                ((0,0), (1,0))),
-                          
-                          'r': (((1,1), (1,0)),
-                                ((0,1), (0,0))),
-                          
-                          'b': (((1,1), (1,0)),
-                                ((1,0), (0,0)))
-                          }
-
-    # Some models to build
-
-    # In these patterns each entry is a set of rows, with vertically
-    # aligned rows forming a plane
-    # Number of entries is depth, entries in each entry is height,
-    # len of each string is width.
-    # x increases across len of string
-    # y decreases across pattern
-    # z decreases across row_set
-    # So what you see here is the top plane on the left, bottom plane
-    # on the right.
-    
-    cube = (
+model_dict = {
+    "cube3":
+    (
         ("***", "***", "***"),
         ("***", "***", "***"),
-        ("***", "***", "***"))  # should be 240 solutions
-        
-    piano = (
+        ("***", "***", "***")
+    ),  # should be 240 soma solutions, 13 diabolical, 1 sg
+
+    "piano":
+    (
         (".***.", "*****", "*****", "*****"),
-        (".....", "*...*", "*****", "*...*"))
+        (".....", "*...*", "*****", "*...*")
+    ),
 
-    giraffe = (
+    "giraffe":
+    (
         ("....", "....", "....", "....", "....", "....", ".*.*"),
         (".*..", ".*..", ".*..", ".*..", ".*..", ".***", ".***"),
         ("**..", ".*..", ".*..", ".*..", ".*..", ".***", ".***"),
-        ("....", "....", "....", "....", "....", "....", ".*.*"))  # I find no solutions
+        ("....", "....", "....", "....", "....", "....", ".*.*")
+    ),  # I find no solutions
 
-    grand_piano = (
+    "grand_piano":
+    (
         ("..***.", "..****"),
         (".****.", ".*****"),
-        ("*****.", "******"))
+        ("*****.", "******")
+    ),
 
-    teddy_bear = (
+    "teddy_bear":
+    (
         ("**.", "**.", "***", "**.", "**.", "***"),
         ("*..", "**.", "**.", "**.", "**.", "**."),
-        ("...", "...", "*..", "...", "...", "*.."))
+        ("...", "...", "*..", "...", "...", "*..")
+    ),
 
-    gorilla = (
+    "gorilla":
+    (
         ("..*..", "..*.."),
         ("*...*", "*****"),
         (".....", "*****"),
@@ -597,11 +666,10 @@ def main():
         (".....", ".***."),
         (".....", ".***."),
         (".....", ".*.*.")
-        )  # only 1 solution
+    ),  # only 1 solution    
 
-    # 2 sets
-
-    blockhouse = (
+    "blockhouse":  # 2 sets
+    (
         (".......", "...*..."),
         (".*****.", ".*****."),
         (".*****.", ".*****."),
@@ -609,11 +677,89 @@ def main():
         (".*****.", ".*****."),
         (".*****.", ".*****."),
         (".......", "...*..."),
-    )
+    ),
 
+    "gorillas":  # 2 sets
+    (
+        ("..*......*..", "..*......*.."),
+        ("*...*..*...*", "*****..*****"),
+        ("............", "*****..*****"),
+        ("............", "*****..*****"),
+        ("............", ".***....***."),
+        ("............", ".***....***."),
+        ("............", ".*.*....*.*.")  # should be 3 solutions
+    ),  # only 1 solution    
 
-    start = cube
+    "cube4":  # Bedlam Cube
+    (
+        ("****", "****", "****", "****"),
+        ("****", "****", "****", "****"),
+        ("****", "****", "****", "****"),
+        ("****", "****", "****", "****")
+    )  # should be  solutions
+}
 
+def models (name):
+
+    if name in model_dict:
+        return model_dict[name]
+    else:
+        return None
+    
+def main():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument (
+        'model',
+        type=str,
+        nargs = "?",
+        default = "cube3",
+        help="Model to be solved, default = 'cube3'")
+
+    parser.add_argument (
+        '-p', '--puzzle',
+        type=str,
+        nargs="?",
+        default = "soma",
+        help="Puzzle to be used, default = 'soma'; list puzzles if no argument")
+
+    parser.add_argument (
+        '-m', '--models',
+        action="store_true",
+        help="List builtin models")
+
+    args = parser.parse_args()
+
+    if args.models:
+        for m in model_dict:
+            print (f"  {m}")
+        return
+
+    puzzle_dict = {
+        "soma": [27, None, "Soma Cube (by Piet Hein)"],
+        "double_soma": [54, Solver.DOUBLE_SOMA_PIECES, "2 sets Soma Cube"],
+        "bedlam": [64, Solver.BEDLAM_PIECES, "Bedlam Cube (by Bruce Bedlam)"],
+        "diabolical": [27, Solver.DIABOLICAL_PIECES, "Diabolical Cube (pub. by Angelo Lewis)"],
+        "sg": [27, Solver.SG_PIECES, "Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma)"],
+    }
+    
+    start = models (args.model)
+    if start == None:
+        print (f"Unknown model {args.model}")
+        return
+    
+    puzzle = args.puzzle
+    if puzzle == None:
+        for p in puzzle_dict:
+            print (f"  {p:15} {puzzle_dict[p][2]}")
+        return
+    elif puzzle not in puzzle_dict:
+        print (f"Unknown puzzle {puzzle}")
+        return
+    else:
+        puz_stuf = puzzle_dict[puzzle]
+    
     # Convert pattern to cartesian coordinates
     coords = []
     for y in range(len(start)):
@@ -624,8 +770,11 @@ def main():
                 if start[y][z][x] == "*":
                     coords.append((x, len(start)-y-1, len(row_set)-z-1))
     coords = tuple(coords)
-    if len(coords) != 27 and len(coords) != 54:
-        print (f"Too {'many' if (len(coords) > 27 and len(coords) < 40 or len(coords) > 54) else 'few'} cubes: {len(coords)}")
+
+    expnum = puz_stuf[0]    
+    fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
+    if fewmany != "":
+        print (f"{args.model} has too {fewmany} cubes for {puzzle}: {len(coords)}")
         return
 
     # Get dimensions of volume
@@ -635,19 +784,16 @@ def main():
             if c[i] >= d[i]:
                 d[i] = c[i] + 1
 
-    print (f"Width {d[0]} depth {d[1]} height {d[2]}")
-
     # Build volume with dead cells marked
     volume = [[["."] * d[2] for _ in range(d[1])] for _ in range (d[0])]
     for c in coords:
         volume[c[0]][c[1]][c[2]] = ""
 
-    if len(coords) == 27:
+    if puz_stuf[1] == None:
         solver = Solver(volume=volume)
     else:
-        return
-        solver = Solver(volume=volume, pieces=NONSTANDARD_PIECES)
-
+        solver = Solver(volume=volume, pieces=puz_stuf[1])
+    
     solver.print_volume(solver.start_volume)
     n = solver.find_solutions()
     if n == 0:
