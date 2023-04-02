@@ -870,8 +870,7 @@ def main():
     parser.add_argument (
         '-n', '--notation',
         type=str,
-        default="ww",
-        help="For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)")
+        help="For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb, default) or 'con' (Conway)")
 
     parser.add_argument (
         '-c', '--colors',
@@ -936,6 +935,7 @@ def main():
     notation = {}
     colors = {}
     if puzzle_name == "soma" or puzzle_name == "double_soma":
+        notation_name = "ww" if args.notation == None else args.notation
         notation = {}
         if args.colors:
             colors = {"W": ["white", "on_grey"], "Y": ["yellow", "on_white"], "G": ["green", "on_white"],
@@ -945,10 +945,10 @@ def main():
                       "o": ["yellow", "on_grey"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
                       "b": ["grey", "on_white"],
                       }
-        if args.notation == 'num':
+        if notation_name == 'num':
             notation = {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7",
                         "w": "1", "y": "2", "g": "3", "o": "4", "l": "5", "r": "6", "b": "7"}
-        elif args.notation == 'somap':
+        elif notation_name == 'somap':
             notation = {"W": "B", "L": "U", "B": "A",
                         "w": "b", "l": "u", "b": "a"}
             if args.colors:
@@ -959,17 +959,18 @@ def main():
                           "o": ["yellow", "on_white"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
                           "b": ["grey", "on_white"],
                           }
-        elif args.notation == "ww":
+        elif notation_name == "ww":
             pass
         else:
-            print (f"*** Unrecognized notation '{args.notation}' ignored")
+            print (f"*** Unrecognized notation '{notation_name}' ignored")
     elif puzzle_name == "pentominoes":
-        if args.notation == 'con':
+        notation_name = "gol" if args.notation == None else args.notation
+        if notation_name == 'con':
             notation = {"F": "R", "I": "O", "L": "Q", "N": "S"}
-        elif args.notation == "gol":
+        elif notation_name == "gol":
             notation = {}
         else:
-            print (f"*** Unrecognized notation '{args.notation}' ignored")
+            print (f"*** Unrecognized notation '{notation_name}' ignored")
 
     # Get dimensions of volume
     d = [0, 0, 0]

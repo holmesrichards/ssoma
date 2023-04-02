@@ -28,6 +28,8 @@ options:
   -n NOTATION, --notation NOTATION
                         For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)
   -c, --colors          Colorize model printouts when possible
+  -s, --stop            Stop after first solution found
+  -q, --quiet           Do not show solutions
 ```
 
 Puzzles that can be specified with the `-p` argument are:
@@ -124,7 +126,7 @@ $ python3 ssoma.py -m gorilla
 ..... / .***. / 
 ..... / .*.*. / 
 ################################################################################
-Elapsed time: 0:00:00.039574 / 77 variants have been tried, 1 solutions found
+Elapsed time: 0:00:00.039574 / 77 variants have been tried, 1 solution found
 Solution № 1
 ..R.. / ..R.. / 
 B...L / BBRRL / 
@@ -137,7 +139,7 @@ B...L / BBRRL /
 ```
 
 First is shown the model. Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." is a cubical void.
-After this, every 5 seconds and at end of analysis a status update line is printed. At end of analysis all solutions are printed.
+After this, every 5 seconds and at end of analysis a status update line is printed. At end of analysis all solutions are printed, unless the `-q` option is used (probably because you want to know if solutions exist or how many there are but not what they are).
 
-You can terminate running with `CTRL-C` and partial results will be shown.
+You can terminate running with `CTRL-C` and partial results will be shown. The `-s` option will stop analysis and print partial results after the first solution is found.
 
