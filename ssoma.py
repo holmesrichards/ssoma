@@ -977,7 +977,7 @@ def main():
     except:
         print ("*** Terminated")
         
-    self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'s' if len(self.solutions) > 1 else ''} found", 5.0, force=True)
+    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {len(solver.solutions)} solution{'s' if len(solver.solutions) > 1 else ''} found", 5.0, force=True)
     n = len(solver.solutions)
     i = 0
     for s in solver.solutions:
