@@ -432,7 +432,7 @@ class Solver():
                   for cell in row) for row in plane) for plane in sol)
         return sol2
 
-    def find_solutions(self):
+    def find_solutions(self, stop=False):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
 
@@ -444,7 +444,7 @@ class Solver():
 
         self.starttime = time()
         self.prevtime = self.starttime
-        self.dlx_alg(self.llist, self.start_volume)
+        self.dlx_alg(self.llist, self.start_volume, stop)
 
         return len(self.solutions)
 
@@ -511,7 +511,7 @@ class Solver():
                     return
         return 1
 
-    def dlx_alg(self, llist, volume):
+    def dlx_alg(self, llist, volume, stop=False):
         self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'s' if len(self.solutions) > 1 else ''} found", 5.0)
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
@@ -557,7 +557,9 @@ class Solver():
                 llist.delete_col(col_node.col_head)
             # Pass the shrinked llist and the volume with the picked piece added
             # to the next processing
-            self.dlx_alg(llist, new_volume)
+            self.dlx_alg(llist, new_volume, stop)
+            if stop and len(self.solutions) > 0:
+                return
 
             for row in rows_to_restore:
                 llist.insert_row(row)
@@ -803,7 +805,7 @@ Convert string to tuple of coordinates
             plane += 1
         elif c == "*" or c == ".":
             ncells += 1
-            
+
     cl = []
     plane = nplanes-1
     row = nrows-1
@@ -875,6 +877,18 @@ def main():
         '-c', '--colors',
         action = "store_true",
         help = "Colorize model printouts when possible"
+        )
+
+    parser.add_argument (
+        '-s', '--stop',
+        action = "store_true",
+        help = "Stop after first solution found"
+        )
+
+    parser.add_argument (
+        '-q', '--quiet',
+        action = "store_true",
+        help = "Do not show solutions"
         )
 
     args = parser.parse_args()
@@ -956,7 +970,7 @@ def main():
             notation = {}
         else:
             print (f"*** Unrecognized notation '{args.notation}' ignored")
-    
+
     # Get dimensions of volume
     d = [0, 0, 0]
     for c in coords:
@@ -973,17 +987,18 @@ def main():
 
     solver.print_volume(solver.start_volume)
     try:
-        solver.find_solutions()
+        solver.find_solutions(stop=args.stop)
     except:
         print ("*** Terminated")
-        
-    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {len(solver.solutions)} solution{'s' if len(solver.solutions) > 1 else ''} found", 5.0, force=True)
+
     n = len(solver.solutions)
-    i = 0
-    for s in solver.solutions:
-        i += 1
-        print(f"Solution № {i}")
-        solver.print_volume(s, notation, colors)
+    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {n} solution{'s' if n > 1 else ''} found", 5.0, force=True)
+    if not args.quiet:
+        i = 0
+        for s in solver.solutions:
+            i += 1
+            print(f"Solution № {i}")
+            solver.print_volume(s, notation, colors)
 
 if __name__ == "__main__":
     main()
