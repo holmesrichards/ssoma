@@ -33,6 +33,8 @@ from datetime import timedelta
 from copy import deepcopy
 import argparse
 from termcolor import colored
+import json
+
 
 class Node():
     def __init__(self, value):
@@ -583,7 +585,7 @@ class Solver():
                 new_volume[plane][row][cell] = node.row_head.value
         return new_volume
 
-    def print_volume(self, volume, notation={}, colors={}):
+    def print_volume(self, volume, notation={}, colors={}, file=None):
         for y in range (len(volume[0])-1,-1,-1):
             for z in range(len(volume[0][0])-1,-1,-1):
                 for x in range (len(volume)):
@@ -597,10 +599,10 @@ class Solver():
                                 nc = colored (nc, colors[cell][0], colors[cell][1])
                             else:
                                 nc = colored (nc, "grey", "on_white")
-                    print (nc, end="")
-                print (" / ", end = "")
-            print ()
-        print("#" * 80)
+                    print (nc, end="", file=file)
+                print (" / ", end = "", file=file)
+            print (file=file)
+        print("#" * 80, file=file)
 
     def unique_piece_postures(self, named_pieces):
         postures = set(named_pieces)
@@ -854,6 +856,11 @@ def main():
         help="File with model to be solved")
 
     parser.add_argument (
+        "-o", '--output_file',
+        type=str,
+        help="File for solutions output (.txt or .json)")
+
+    parser.add_argument (
         '-p', '--puzzle',
         type=str,
         nargs="?",
@@ -929,8 +936,8 @@ def main():
     expnum = puzzle.ncubes
     fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
     if fewmany != "":
-        print (f"{model} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
-        return
+        print (f"*** {args.model if args.model!='_def' else 'Model'} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
+        #return
 
     notation = {}
     colors = {}
@@ -994,12 +1001,33 @@ def main():
 
     n = len(solver.solutions)
     solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
-    if not args.quiet:
+
+    ofn = args.output_file
+    ojson = False if not ofn else ofn[-5:] == ".json"
+    otxt = False if not ofn else ofn[-4:] == ".txt"
+
+    if ofn:
+        try:
+            of = open (ofn, "w")
+        except:
+            print (f"*** Cannot open output file {ofn}")
+    if (not args.quiet) or ofn:
         i = 0
+        sarr = []
         for s in solver.solutions:
             i += 1
-            print(f"Solution № {i}")
-            solver.print_volume(s, notation, colors)
-
+            if not args.quiet:
+                print(f"Solution № {i}")
+                solver.print_volume(s, notation, colors)
+            if otxt:
+                print(f"Solution № {i}", file=of)
+                solver.print_volume(s, notation, colors, file=of)
+            elif ojson:
+                sarr.append (s)
+    if ojson:
+        json.dump(sarr, of)
+    if ofn:
+        of.close()
+        
 if __name__ == "__main__":
     main()
