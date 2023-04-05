@@ -448,8 +448,6 @@ class Solver():
         self.prevtime = self.starttime
         self.dlx_alg(self.llist, self.start_volume, stop)
 
-        return len(self.solutions)
-
     # Converts a one dimensional's element index to two dimensional's coordinates
     def num_to_coords(self, num):
         plane = num // (self.depth * self.width)
@@ -524,7 +522,7 @@ class Solver():
                 if self.check_solution_uniqueness(solution):
                     self.solutions.add(solution)
                     self.reduced_solutions.add(self.reduce_solution(solution))
-                return
+                return True
         # Search a column with a minimum of intersected rows
         min_col, min_col_sum = self.find_min_col(llist, llist.head)
         # The performance optimization - stops branch analyzing if empty columns appears
@@ -559,9 +557,9 @@ class Solver():
                 llist.delete_col(col_node.col_head)
             # Pass the shrinked llist and the volume with the picked piece added
             # to the next processing
-            self.dlx_alg(llist, new_volume, stop)
-            if stop and len(self.solutions) > 0:
-                return
+            found = self.dlx_alg(llist, new_volume, stop)
+            if stop and found:
+                return found
 
             for row in rows_to_restore:
                 llist.insert_row(row)
@@ -924,6 +922,8 @@ def main():
     coords = []
     if args.model_file:
         coords = readmodel (args.model_file)
+        if coords == None:
+            return
     elif args.model == None:
         for m in model_dict:
             print (f"  {m}")
@@ -937,7 +937,8 @@ def main():
     fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
     if fewmany != "":
         print (f"*** {args.model if args.model!='_def' else 'Model'} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
-        #return
+        if fewmany == "many":
+            return
 
     notation = {}
     colors = {}
