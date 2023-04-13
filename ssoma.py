@@ -436,8 +436,81 @@ class Solver():
 
     def find_solutions(self, stop=False):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
-        pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
 
+        # If this is 3x3x3 then count cubes
+        if self.width == 3 and self.depth == 3 and self.height == 3:
+            pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
+            vefcs = {}
+            cube_type = \
+            [
+                [
+                    [0, 1, 0],
+                    [1, 2, 1],
+                    [0, 1, 0]
+                ],
+                [
+                    [1, 2, 1],
+                    [2, 3, 2],
+                    [1, 2, 1]
+                ],
+                [
+                    [0, 1, 0],
+                    [1, 2, 1],
+                    [0, 1, 0]
+                ]
+            ]
+            for g in pos_gen:
+                if g[0] == 0:
+                    continue
+                vefc = [0, 0, 0, 0]
+                for row in range(3):
+                    for plane in range(3):
+                        for cell in range(3):
+                            gcrp = g[1+cell+self.width*(row+self.depth*plane)]
+                            vefc[cube_type[cell][row][plane]] += gcrp
+                if g[0] in vefcs:
+                    if vefc not in vefcs[g[0]]:
+                        vefcs[g[0]].append(vefc)
+                else:
+                    vefcs[g[0]] = [vefc]
+                
+            pick = [0 for _ in range(len(vefcs.keys()))]
+            vefca = [vefcs[k] for k in sorted(vefcs.keys())]
+            labels = sorted(vefcs.keys())
+
+            possibles = []
+            while True:
+                j = len(vefca)-1
+                while pick[j] == len(vefca[j])-1:
+                    pick[j] = 0
+                    j -= 1
+                    if j < 0:
+                        break
+                if j < 0:
+                    break
+                pick[j] += 1
+                sum = [0, 0, 0, 0]
+                for j in range(len(vefca)):
+                    for i in range(len(sum)):
+                        sum[i] += vefca[j][pick[j]][i]
+                if sum == [8, 12, 6, 1]:
+                    possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
+
+            print ("*** Cube counting results:")
+            for j in range (len(vefca)):
+                print (f"For {labels[j]} central:")
+                n = 0
+                for p in possibles:
+                    if p[j][3] == 1:
+                        n += 1
+                        print ("   ", end="")
+                        for jj in range (len(vefca)):
+                            print (f"{labels[jj]}: {p[jj]}", end=" ")
+                        print()
+                if n == 0:
+                    print ("   Not possible")
+    
+        pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
         for line in pos_gen:
             for val in line:
                 self.llist.append(val)
@@ -646,7 +719,7 @@ class Solver():
     def generate_positions(self, postures, width, depth, height):
         def apply_posture(name, posture, x, y, z, wdth, dpth, hght):
             # Flattening of 2d list
-            line = [cell for plane in self.start_volume for row in plane for cell in row]
+            line = [0 if cell=='' else 1 for plane in self.start_volume for row in plane for cell in row]
             # Puts the piece onto the flattened start volume
             for r in range(hght):
                 for f in range(dpth):
@@ -826,7 +899,6 @@ Convert string to tuple of coordinates
     return tuple(cl)
 
 def readmodel (filename):
-    m = []
     try:
         with open (filename, "r") as f:
             strng = "".join(f.readlines())
