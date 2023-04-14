@@ -374,6 +374,24 @@ pentomino_puzzle = Puzzle(
     }
 )
 
+miku_puzzle = Puzzle(
+    "J. G. Mikusinski's cube",
+    "cube3",
+    {
+        'a' : (((0, 1, 1), (0, 1, 0)),
+               ((0, 0, 0), (1, 1, 0))),
+        'b' : (((1, 0, 0), (1, 0, 0)),
+               ((0, 0, 0), (1, 1, 1))),
+        'c' : (((1, 0, 0), (1, 1, 1)),
+               ((0, 0, 0), (0, 1, 0))),
+        'd' : (((1, 0), (1, 0)),
+               ((0, 0), (1, 1))),
+        'e' : (((0, 0, 1), (1, 1, 1)),),
+        'f' : (((0, 1), (0, 1)),
+               ((0, 0), (1, 1)))
+    }
+)
+
 class Solver():
     named_pieces = set()
     all_piece_postures = set()
@@ -977,6 +995,7 @@ def main():
         "sg": sg_puzzle,
         "conway": conway_puzzle,
         "pentominoes": pentomino_puzzle,
+        "miku": miku_puzzle,
     }
 
     puzzle_name = args.puzzle
