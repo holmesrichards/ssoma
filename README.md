@@ -14,19 +14,20 @@ On my computer it finds all 240 Soma Cube solutions in under 5 seconds. Then it 
 ## Usage
 
 ```
-ssoma.py [-h] [-p [PUZZLE]] [-m [MODEL]] [-n NOTATION] [model_file]
-
-positional arguments:
-  model_file            File with model to be solved
+usage: ssoma.py [-h] [-i INPUT_FILE] [-o OUTPUT_FILE] [-p [PUZZLE]] [-m [MODEL]] [-n NOTATION] [-c] [-s] [-q]
 
 options:
   -h, --help            show this help message and exit
+  -i INPUT_FILE, --input_file INPUT_FILE
+                        File with model(s) to be solved
+  -o OUTPUT_FILE, --output_file OUTPUT_FILE
+                        File for solutions output (.txt or .json)
   -p [PUZZLE], --puzzle [PUZZLE]
                         Puzzle to be used, default = 'soma'; list puzzles if no argument
   -m [MODEL], --model [MODEL]
-                        Builtin model to be solved, default depends on puzzle, list models if no argument
+                        Model to be solved, default depends on puzzle, list models if no argument
   -n NOTATION, --notation NOTATION
-                        For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb) or 'con' (Conway)
+                        For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb, default) or 'con' (Conway)
   -c, --colors          Colorize model printouts when possible
   -s, --stop            Stop after first solution found
   -q, --quiet           Do not show solutions
@@ -40,34 +41,22 @@ Puzzles that can be specified with the `-p` argument are:
   diabolical      Diabolical Cube (pub. by Angelo Lewis) (27 cubes)
   sg              Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma) (27 cubes)
   conway          Conway puzzle (Blocks-In-a-Box) (by John Conway) (125 cubes)
+  pentominoes     Solid Pentominoes (by Solomon Golomb) (60 cubes, default model r06x10)
+  miku            J. G. Mikusinski's cube (27 cubes, default model cube3)
 ```
 (`conway` is included mainly just to show how bad brute force is for it! I have not had the patience to run it long enough for it to find a solution.)
 
-The model to be solved is read from the specified file, or if no file is given, the builtin model specified with the `-m` argument is used. Builtin models that can be specified are:
+If the `-i` option is not used to specify an input file:
 
-(For Soma, Diabolical, or Slothouber-Graatsma:)
-```
-  cube3  [default]
-```
-(For Soma:)
-```
-  piano
-  giraffe
-  gorilla
-```
-(For double Soma:)
-```
-  blockhouse [default]
-  gorillas
-```
-(For Bedlam:)
-```
-  cube4 [default]
-```
-(For Conway:)
-```
-  cube5 [default]
-```
+* If the `-m` option is given with a model name, then the builtin model with the given name is solved.
+* If the `-m` option is given with no model name, the available builtin model names are listed.
+* If the `-m` option is not given, the builtin default model is solved.
+
+If the `-i` option is used to specify an input file:
+
+* If the `-m` option is given with a model name, then the model from the specified input file with the given name is solved.
+* If the `-m` option is given with no model name, the available model names from the input file are listed.
+* If the `-m` option is not given, all the models from the specified input file are solved.
 
 For Soma, notations that can be specified with the `-n` argument are as follows:
 
@@ -104,11 +93,22 @@ For Pentominoes, there are two notations:
 
 The model can be specified in an input file, looking like this:
 ```
+Model name
+
 *.... / *.... / *.... 
 *.... / *.... / *.... 
 ***.. / ***.. / ***..
 ..*.. / ..*.. / ..*..
 ..*** / ..*** / ..***
+
+Model name 2
+
+*** / *** / ***
+*** / *** / ***
+*** / *** / ***
+
+...
+
 ```
 Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." is a cubical void. Other characters are ignored.
 
@@ -140,6 +140,8 @@ B...L / BBRRL /
 
 First is shown the model. Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." is a cubical void.
 After this, every 5 seconds and at end of analysis a status update line is printed. At end of analysis all solutions are printed, unless the `-q` option is used (probably because you want to know if solutions exist or how many there are but not what they are).
+
+Output to a file is not working correctly at the moment, at least with multi model input files.
 
 You can terminate running with `CTRL-C` and partial results will be shown. The `-s` option will stop analysis and print partial results after the first solution is found.
 

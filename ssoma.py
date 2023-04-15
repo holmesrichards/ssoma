@@ -34,6 +34,7 @@ from copy import deepcopy
 import argparse
 from termcolor import colored
 import json
+import re
 
 
 class Node():
@@ -391,6 +392,17 @@ miku_puzzle = Puzzle(
                ((0, 0), (1, 1)))
     }
 )
+
+puzzle_dict = {
+    "soma": soma_puzzle,
+    "double_soma": double_soma_puzzle,
+    "bedlam": bedlam_puzzle,
+    "diabolical": diabolical_puzzle,
+    "sg": sg_puzzle,
+    "conway": conway_puzzle,
+    "pentominoes": pentomino_puzzle,
+    "miku": miku_puzzle,
+}
 
 class Solver():
     named_pieces = set()
@@ -916,14 +928,36 @@ Convert string to tuple of coordinates
 
     return tuple(cl)
 
-def readmodel (filename):
+def readmodels (filename):
     try:
-        with open (filename, "r") as f:
-            strng = "".join(f.readlines())
+        f = open (filename, "r")
     except:
         print (f"Could not read {filename}")
-        return None
-    return string_to_coords(strng)
+        yield None
+
+    modelname = ""
+    strng = ""
+    for l in f:
+        ls = l.strip()
+        if ls == "":
+            if strng == "":
+                continue
+            #print (f"&&&&&&{modelname}\n{strng}")
+            yield [modelname, string_to_coords(strng)]
+            modelname = ""
+            strng = ""
+        elif modelname == "":
+            if re.search("^[ ./*]*$", ls):
+                modelname = "..."
+                strng = l
+            else:
+                modelname = ls
+        else:
+            strng += l
+            
+    if strng != "":
+        #print (f"&&&&&&{modelname}\n{strng}")
+        yield [modelname, string_to_coords(strng)]
 
 def parsemodel (modelname):
     mdl = models (modelname)
@@ -933,15 +967,81 @@ def parsemodel (modelname):
 
     return string_to_coords (mdl)
 
+def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output_file, quiet):
+    puzzle = puzzle_dict[puzzle_name]
+    expnum = puzzle.ncubes
+    fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
+    if fewmany != "":
+        print (f"*** {modelname} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
+        if fewmany == "many" or len(coords) == 0:
+            return
+
+    ofn = output_file
+    ojson = False if not ofn else ofn[-5:] == ".json"
+    otxt = False if not ofn else ofn[-4:] == ".txt"
+
+    of = None
+    if ofn:
+        try:
+            of = open (ofn, "w")
+        except:
+            print (f"*** Cannot open output file {ofn}")
+    print (f"{modelname}", file=of)
+    
+    # Get dimensions of volume
+    d = [0, 0, 0]
+    for c in coords:
+        for i in range(3):
+            if c[i] >= d[i]:
+                d[i] = c[i] + 1
+
+    # Build volume with dead cells marked
+    volume = [[["."] * d[2] for _ in range(d[1])] for _ in range (d[0])]
+    for c in coords:
+        volume[c[0]][c[1]][c[2]] = ""
+
+    solver = Solver(volume=volume, puzzle=puzzle)
+            
+    if (not quiet) or ofn:
+        solver.print_volume(solver.start_volume)
+    try:
+        solver.find_solutions(stop=stopp)
+    except:
+        print ("*** Terminated")
+
+    n = len(solver.solutions)
+    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
+
+    if (not quiet) or ofn:
+        print (f"\n", file=of)
+        i = 0
+        sarr = []
+        for s in solver.solutions:
+            i += 1
+            if not quiet:
+                print(f"Solution № {i}")
+                solver.print_volume(s, notation, colors)
+            if otxt:
+                print(f"Solution № {i}", file=of)
+                solver.print_volume(s, notation, colors, file=of)
+            elif ojson:
+                sarr.append (s)
+    if ojson:
+        json.dump(sarr, of)
+    if ofn:
+        of.close()
+
+
+
+
 def main():
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument (
-        'model_file',
+        '-i', '--input_file',
         type=str,
-        nargs="?",
-        help="File with model to be solved")
+        help="File with model(s) to be solved")
 
     parser.add_argument (
         "-o", '--output_file',
@@ -960,7 +1060,7 @@ def main():
         type=str,
         nargs="?",
         default="_def",
-        help="Builtin model to be solved, default depends on puzzle, list models if no argument")
+        help="Model to be solved, default depends on puzzle, list models if no argument")
 
     parser.add_argument (
         '-n', '--notation',
@@ -987,17 +1087,6 @@ def main():
 
     args = parser.parse_args()
 
-    puzzle_dict = {
-        "soma": soma_puzzle,
-        "double_soma": double_soma_puzzle,
-        "bedlam": bedlam_puzzle,
-        "diabolical": diabolical_puzzle,
-        "sg": sg_puzzle,
-        "conway": conway_puzzle,
-        "pentominoes": pentomino_puzzle,
-        "miku": miku_puzzle,
-    }
-
     puzzle_name = args.puzzle
     if puzzle_name == None:
         for p in puzzle_dict:
@@ -1007,29 +1096,6 @@ def main():
         print (f"Unknown puzzle {puzzle_name}")
         return
     puzzle = puzzle_dict[puzzle_name]
-
-    # Convert pattern to cartesian coordinates
-
-    coords = []
-    if args.model_file:
-        coords = readmodel (args.model_file)
-        if coords == None:
-            return
-    elif args.model == None:
-        for m in model_dict:
-            print (f"  {m}")
-        return
-    elif args.model == "_def":
-        coords = parsemodel (puzzle.defmodel)
-    else:
-        coords = parsemodel (args.model)
-
-    expnum = puzzle.ncubes
-    fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
-    if fewmany != "":
-        print (f"*** {args.model if args.model!='_def' else 'Model'} has too {fewmany} cubes for {puzzle_name}: {len(coords)}")
-        if fewmany == "many":
-            return
 
     notation = {}
     colors = {}
@@ -1071,55 +1137,37 @@ def main():
         else:
             print (f"*** Unrecognized notation '{notation_name}' ignored")
 
-    # Get dimensions of volume
-    d = [0, 0, 0]
-    for c in coords:
-        for i in range(3):
-            if c[i] >= d[i]:
-                d[i] = c[i] + 1
+    # Convert pattern to cartesian coordinates
 
-    # Build volume with dead cells marked
-    volume = [[["."] * d[2] for _ in range(d[1])] for _ in range (d[0])]
-    for c in coords:
-        volume[c[0]][c[1]][c[2]] = ""
+    coords = []
 
-    solver = Solver(volume=volume, puzzle=puzzle)
+    if args.model == None:  # -m with no argument, list models
+        if args.input_file:
+            for [m, coords] in readmodels (args.input_file):
+                print (f"  {m}")
+        else:
+            for m in model_dict:
+                print (f"  {m}")
+        return
 
-    solver.print_volume(solver.start_volume)
-    try:
-        solver.find_solutions(stop=args.stop)
-    except:
-        print ("*** Terminated")
+    if args.input_file:
+        found = False
+        for [modelname, coords] in readmodels (args.input_file):
+            if coords == None:
+                return
+            if args.model == '_def' or args.model == modelname:
+                solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, args.output_file, args.quiet)
+                found = True
+        if not found:
+            if args.model == None:
+                print ("*** No model found in {args.input_file}")
+            else:
+                print (f"*** '{args.model}' not found in {args.input_file}")
+    else:
+        modelname = puzzle.defmodel if args.model == "_def" else args.model
+        coords = parsemodel (modelname)
+        solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, args.output_file, args.quiet)
 
-    n = len(solver.solutions)
-    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
-
-    ofn = args.output_file
-    ojson = False if not ofn else ofn[-5:] == ".json"
-    otxt = False if not ofn else ofn[-4:] == ".txt"
-
-    if ofn:
-        try:
-            of = open (ofn, "w")
-        except:
-            print (f"*** Cannot open output file {ofn}")
-    if (not args.quiet) or ofn:
-        i = 0
-        sarr = []
-        for s in solver.solutions:
-            i += 1
-            if not args.quiet:
-                print(f"Solution № {i}")
-                solver.print_volume(s, notation, colors)
-            if otxt:
-                print(f"Solution № {i}", file=of)
-                solver.print_volume(s, notation, colors, file=of)
-            elif ojson:
-                sarr.append (s)
-    if ojson:
-        json.dump(sarr, of)
-    if ofn:
-        of.close()
         
 if __name__ == "__main__":
     main()
