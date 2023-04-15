@@ -703,7 +703,7 @@ class Solver():
                     print (nc, end="", file=file)
                 print (" / ", end = "", file=file)
             print (file=file)
-        print("#" * 80, file=file)
+        print(file=file)
 
     def unique_piece_postures(self, named_pieces):
         postures = set(named_pieces)
@@ -967,7 +967,7 @@ def parsemodel (modelname):
 
     return string_to_coords (mdl)
 
-def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output_file, quiet):
+def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output_file, output_format, quiet):
     puzzle = puzzle_dict[puzzle_name]
     expnum = puzzle.ncubes
     fewmany = 'many' if len(coords) > expnum else 'few' if len(coords) < expnum else ""
@@ -976,17 +976,8 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         if fewmany == "many" or len(coords) == 0:
             return
 
-    ofn = output_file
-    ojson = False if not ofn else ofn[-5:] == ".json"
-    otxt = False if not ofn else ofn[-4:] == ".txt"
-
-    of = None
-    if ofn:
-        try:
-            of = open (ofn, "w")
-        except:
-            print (f"*** Cannot open output file {ofn}")
-    print (f"{modelname}", file=of)
+    if output_format == "txt":
+        print (f"{modelname}\n", file=output_file)
     
     # Get dimensions of volume
     d = [0, 0, 0]
@@ -1003,35 +994,39 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
     solver = Solver(volume=volume, puzzle=puzzle)
             
     if (not quiet) or ofn:
-        solver.print_volume(solver.start_volume)
+        if output_format == "txt":
+            solver.print_volume(solver.start_volume, file=output_file)
     try:
         solver.find_solutions(stop=stopp)
     except:
         print ("*** Terminated")
 
     n = len(solver.solutions)
-    solver.print_progress(f"{solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
+    solver.print_progress(f"{modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
+    if output_format == "txt":
+        print(file=output_file)
 
     if (not quiet) or ofn:
-        print (f"\n", file=of)
         i = 0
         sarr = []
         for s in solver.solutions:
             i += 1
-            if not quiet:
+            if not quiet and output_format == "":
                 print(f"Solution № {i}")
                 solver.print_volume(s, notation, colors)
-            if otxt:
-                print(f"Solution № {i}", file=of)
-                solver.print_volume(s, notation, colors, file=of)
-            elif ojson:
+            if output_format == "txt":
+                print(f"Solution № {i}", file=output_file)
+                solver.print_volume(s, notation, colors, file=output_file)
+            elif output_format == "json":
                 sarr.append (s)
-    if ojson:
-        json.dump(sarr, of)
-    if ofn:
-        of.close()
-
-
+        if i == 0 and output_format == "txt":
+            print ("*** No solutions", file=output_file)
+        if output_format != "json":
+            print("#" * 80, file=output_file)
+    if output_format == "json":
+        nsarr = [modelname, coords, puzzle_name, sarr]
+        json.dump(nsarr, output_file)
+        print (file=output_file)
 
 
 def main():
@@ -1150,13 +1145,29 @@ def main():
                 print (f"  {m}")
         return
 
+    ofn = args.output_file
+    ofform = "json" if ofn and ofn[-5:] == ".json" \
+        else ("txt" if ofn and ofn[-4:] == ".txt" \
+              else "")
+    if ofn and ofform == "":
+        print (f"** Unrecognized output file type {ofn}")
+        return
+    
+    of = None
+    if ofn:
+        try:
+            of = open (ofn, "w")
+        except:
+            print (f"*** Cannot open output file {ofn}")
+
+    
     if args.input_file:
         found = False
         for [modelname, coords] in readmodels (args.input_file):
             if coords == None:
                 return
             if args.model == '_def' or args.model == modelname:
-                solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, args.output_file, args.quiet)
+                solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
                 found = True
         if not found:
             if args.model == None:
@@ -1166,8 +1177,10 @@ def main():
     else:
         modelname = puzzle.defmodel if args.model == "_def" else args.model
         coords = parsemodel (modelname)
-        solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, args.output_file, args.quiet)
+        solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
 
+    if ofn:
+        of.close()
         
 if __name__ == "__main__":
     main()
