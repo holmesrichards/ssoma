@@ -33,6 +33,8 @@ options:
   -q, --quiet           Do not show solutions
 ```
 
+### Puzzles
+
 Puzzles that can be specified with the `-p` argument are:
 ```
   soma            Soma Cube (by Piet Hein) (27 cubes)
@@ -46,6 +48,8 @@ Puzzles that can be specified with the `-p` argument are:
 ```
 (`conway` is included mainly just to show how bad brute force is for it! I have not had the patience to run it long enough for it to find a solution.)
 
+### Models to solve
+
 If the `-i` option is not used to specify an input file:
 
 * If the `-m` option is given with a model name, then the builtin model with the given name is solved.
@@ -57,6 +61,8 @@ If the `-i` option is used to specify an input file:
 * If the `-m` option is given with a model name, then the model from the specified input file with the given name is solved.
 * If the `-m` option is given with no model name, the available model names from the input file are listed.
 * If the `-m` option is not given, all the models from the specified input file are solved.
+
+### Notations
 
 For Soma, notations that can be specified with the `-n` argument are as follows:
 
@@ -114,34 +120,39 @@ Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." 
 
 ## Output
 
-(Uncolorized) Output looks like this:
+(Uncolorized) Text format output looks like this:
 
 ```
-$ python3 ssoma.py -m gorilla
-..*.. / ..*.. / 
+Castle I
+
 *...* / ***** / 
 ..... / ***** / 
 ..... / ***** / 
-..... / .***. / 
-..... / .***. / 
-..... / .*.*. / 
-################################################################################
-Elapsed time: 0:00:00.039574 / 77 variants have been tried, 1 solution found
+..... / ***** / 
+*.... / ****. / 
+
+
 Solution № 1
-..R.. / ..R.. / 
-B...L / BBRRL / 
-..... / BOOLL / 
-..... / OOGGG / 
-..... / .YYG. / 
-..... / .YWW. / 
-..... / .Y.W. / 
-################################################################################
+R...L / RGGGL / 
+..... / RRGLL / 
+..... / WWYYO / 
+..... / BWYOO / 
+B.... / BBYO. / 
+
+Solution № 2
+R...L / RGGGL / 
+..... / RRGLL / 
+..... / WWYYY / 
+..... / BWYOO / 
+B.... / BBOO. / 
+
+...
 ```
 
 First is shown the model. Layers are shown top to bottom, terminated by slashes; "\*" denotes a cube, "." is a cubical void.
-After this, every 5 seconds and at end of analysis a status update line is printed. At end of analysis all solutions are printed, unless the `-q` option is used (probably because you want to know if solutions exist or how many there are but not what they are).
+At end of analysis all solutions are printed, unless the `-q` option is used (probably because you want to know if solutions exist or how many there are but not what they are).
 
-Output to a file is not working correctly at the moment, at least with multi model input files.
+Every 5 seconds and at end of analysis a status update line is shown on the terminal. 
 
 You can terminate running with `CTRL-C` and partial results will be shown. The `-s` option will stop analysis and print partial results after the first solution is found.
 
