@@ -194,215 +194,7 @@ class Puzzle():
                     for cell in row:
                         self.ncubes += 1 if cell == 1 else 0
 
-soma_puzzle = Puzzle(
-    "Soma Cube (by Piet Hein)",
-    "cube3",
-    {
-        'W': (((1,1), (1,0)),),
-
-        'Y': (((1,1,1), (1,0,0)),),
-
-        'G': (((1,1,1), (0,1,0)),),
-
-        'O': (((1,1,0), (0,1,1)),),
-
-        'L': (((1,1), (1,0)),
-              ((0,0), (1,0))),
-
-        'R': (((1,1), (1,0)),
-              ((0,1), (0,0))),
-
-        'B': (((1,1), (1,0)),
-              ((1,0), (0,0)))
-    }
-)
-
-double_soma_puzzle = Puzzle(# For 2-set models
-    "2 sets Soma Cube",
-    "blockhouse",
-    {
-        'W': (((1,1), (1,0)),),
-
-        'Y': (((1,1,1), (1,0,0)),),
-
-        'G': (((1,1,1), (0,1,0)),),
-
-        'O': (((1,1,0), (0,1,1)),),
-
-        'L': (((1,1), (1,0)),
-              ((0,0), (1,0))),
-
-        'R': (((1,1), (1,0)),
-              ((0,1), (0,0))),
-
-        'B': (((1,1), (1,0)),
-              ((1,0), (0,0))),
-
-        'w': (((1,1), (1,0)),),
-
-        'y': (((1,1,1), (1,0,0)),),
-
-        'g': (((1,1,1), (0,1,0)),),
-
-        'o': (((1,1,0), (0,1,1)),),
-
-        'l': (((1,1), (1,0)),
-              ((0,0), (1,0))),
-
-        'r': (((1,1), (1,0)),
-              ((0,1), (0,0))),
-
-        'b': (((1,1), (1,0)),
-              ((1,0), (0,0)))
-    }
-)
-
-bedlam_puzzle = Puzzle(
-    "Bedlam Cube (by Bruce Bedlam)",
-    "cube4",
-    {
-        '0': (((0,1,0),),
-              ((1,1,1),),
-              ((0,0,1),)),
-        '1': (((0,1,0),),
-              ((1,1,1),),
-              ((0,1,0),)),
-        '2': (((1,1,0),),
-              ((0,1,1),),
-              ((0,0,1),)),
-        '3': (((0,0,1), (0,1,1)),
-              ((0,0,0), (1,1,0))),
-        '4': (((0,1,0), (1,1,1)),
-              ((0,0,0), (0,1,0))),
-        '5': (((0,1,0), (0,1,1)),
-              ((0,0,0), (1,1,0))),
-        '6': (((0,1,0), (0,1,0)),
-              ((0,0,0), (1,1,1))),
-        '7': (((1,0,0), (1,1,1)),
-              ((0,0,0), (1,0,0))),
-        '8': (((0,0,1), (1,1,1)),
-              ((0,0,0), (1,0,0))),
-        '9': (((0,0,0), (1,1,1)),
-              ((0,0,1), (0,0,1))),
-        'A': (((0,0,0), (0,1,1)),
-              ((1,1,0), (0,1,0))),
-        'B': (((0,1,0), (1,1,1)),
-              ((0,0,0), (1,0,0))),
-        'C': (((1,0), (1,1)),
-              ((0,0), (0,1))),
-    }
-)
-
-diabolical_puzzle = Puzzle(
-    "Diabolical Cube (pub. by Angelo Lewis)",
-    "cube3",
-    {
-        '2': (((1,1),),),
-        '3': (((1,1),),
-              ((1,0),)),
-        '4': (((1,1),),
-              ((1,1),)),
-        '5': (((1,1),),
-              ((1,0),),
-              ((1,1),)),
-        '6': (((1,1,1),),
-              ((1,1,0),),
-              ((1,0,0),)),
-        '7': (((1,1,0),),
-              ((1,1,0),),
-              ((1,1,1),))
-    }
-)
-
-sg_puzzle = Puzzle(
-    "Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma)",
-    "cube3",
-    {
-        'a' : (((1,1), (1,1)),),
-        'b' : (((1,1), (1,1)),),
-        'c' : (((1,1), (1,1)),),
-        'd' : (((1,1), (1,1)),),
-        'e' : (((1,1), (1,1)),),
-        'f' : (((1,1), (1,1)),),
-        'g' : (((1,),),),
-        'h' : (((1,),),),
-        'i' : (((1,),),)
-    }
-)
-
-conway_puzzle = Puzzle(
-    "Conway puzzle (Blocks-In-a-Box) (by John Conway)",
-    "cube5",
-    {
-        'a' : (((1,1,1,1), (1,1,1,1)),),
-        'b' : (((1,1,1,1), (1,1,1,1)),),
-        'c' : (((1,1,1,1), (1,1,1,1)),),
-        'd' : (((1,1,1,1), (1,1,1,1)),),
-        'e' : (((1,1,1,1), (1,1,1,1)),),
-        'f' : (((1,1,1,1), (1,1,1,1)),),
-        'g' : (((1,1,1,1), (1,1,1,1)),),
-        'h' : (((1,1,1,1), (1,1,1,1)),),
-        'i' : (((1,1,1,1), (1,1,1,1)),),
-        'j' : (((1,1,1,1), (1,1,1,1)),),
-        'k' : (((1,1,1,1), (1,1,1,1)),),
-        'l' : (((1,1,1,1), (1,1,1,1)),),
-        'm' : (((1,1,1,1), (1,1,1,1)),),
-        'n' : (((1,1), (1,1)),),
-        'o' : (((1,1), (1,1)),
-               ((1,1), (1,1)),),
-        'p' : (((1,1,1),),),
-        'q' : (((1,1,1),),),
-        'r' : (((1,1,1),),),
-    }
-)
-
-pentomino_puzzle = Puzzle(
-    "Solid Pentominoes (by Solomon Golomb)",
-    "r06x10",
-    {
-        'F' : (((0,1,1), (1,1,0), (0,1,0),),),
-        'I' : (((1,1,1,1,1),),),
-        'L' : (((1,1,1,1), (1,0,0,0),),),
-        'N' : (((1,1,0,0), (0,1,1,1),),),
-        'P' : (((1,1), (1,1), (1,0),),),
-        'T' : (((1,1,1), (0,1,0), (0,1,0),),),
-        'U' : (((1,0,1), (1,1,1),),),
-        'V' : (((1,0,0), (1,0,0), (1,1,1),),),
-        'W' : (((1,0,0), (1,1,0), (0,1,1),),),
-        'X' : (((0,1,0), (1,1,1), (0,1,0),),),
-        'Y' : (((0,0,1,0), (1,1,1,1),),),
-        'Z' : (((1,1,0), (0,1,0), (0,1,1),),),
-    }
-)
-
-miku_puzzle = Puzzle(
-    "J. G. Mikusinski's cube",
-    "cube3",
-    {
-        'a' : (((0, 1, 1), (0, 1, 0)),
-               ((0, 0, 0), (1, 1, 0))),
-        'b' : (((1, 0, 0), (1, 0, 0)),
-               ((0, 0, 0), (1, 1, 1))),
-        'c' : (((1, 0, 0), (1, 1, 1)),
-               ((0, 0, 0), (0, 1, 0))),
-        'd' : (((1, 0), (1, 0)),
-               ((0, 0), (1, 1))),
-        'e' : (((0, 0, 1), (1, 1, 1)),),
-        'f' : (((0, 1), (0, 1)),
-               ((0, 0), (1, 1)))
-    }
-)
-
-puzzle_dict = {
-    "soma": soma_puzzle,
-    "double_soma": double_soma_puzzle,
-    "bedlam": bedlam_puzzle,
-    "diabolical": diabolical_puzzle,
-    "sg": sg_puzzle,
-    "conway": conway_puzzle,
-    "pentominoes": pentomino_puzzle,
-    "miku": miku_puzzle,
-}
+puzzle_dict = {}
 
 class Solver():
     named_pieces = set()
@@ -410,7 +202,7 @@ class Solver():
     piece_copies = {}
     piece_mirrors = {}
 
-    def __init__(self, volume=None, height=None, depth=None, width=None, puzzle=soma_puzzle):
+    def __init__(self, volume=None, height=None, depth=None, width=None, puzzle=None):
         if volume is None:
             volume = [[[""] * width for _ in range(depth)] for _ in range (height)]
         if height is None and width is None:
@@ -808,108 +600,34 @@ class Solver():
 # So what you see here is the top plane on the left, bottom plane
 # on the right.
 
-model_dict = {
-    "cube3": """
-*** / *** / ***
-*** / *** / ***
-*** / *** / ***
-""",      # should be 240 soma solutions, 13 diabolical, 1 sg
 
-    "piano": """
-.***. / ***** / ***** / *****
-..... / *...* / ***** / *...*
-""",
-
-    "giraffe": """
-.... / .... / .... / .... / .... / .... / .*.*
-.*.. / .*.. / .*.. / .*.. / .*.. / .*** / .***
-**.. / .*.. / .*.. / .*.. / .*.. / .*** / .***
-.... / .... / .... / .... / .... / .... / .*.*
-""",  # I find no solutions
-
-    "gorilla": """
-..*.. / ..*..
-*...* / *****
-..... / *****
-..... / *****
-..... / .***.
-..... / .***.
-..... / .*.*.
-""",  # only 1 solution
-
-    "blockhouse": """
-....... / ...*...
-.*****. / .*****.
-.*****. / .*****.
-.*****. / *******
-.*****. / .*****.
-.*****. / .*****.
-....... / ...*...
-""",  # 2 sets
-
-    "gorillas": """
-..*......*.. / ..*......*..
-*...*..*...* / *****..*****
-............ / *****..*****
-............ / *****..*****
-............ / .***....***.
-............ / .***....***.
-............ / .*.*....*.*.
-""",  # 2 sets, should be 3 solutions
-
-    "cube4":  """
-**** / **** / **** / ****
-**** / **** / **** / ****
-**** / **** / **** / ****
-**** / **** / **** / ****
-""",  # Bedlam Cube, should be  solutions
-
-    "cube5": """
-***** / ***** / ***** / ***** / *****
-***** / ***** / ***** / ***** / *****
-***** / ***** / ***** / ***** / *****
-***** / ***** / ***** / ***** / *****
-***** / ***** / ***** / ***** / *****
-""",    # Conway, should be  solutions
-
-    "r06x10": """
-**********
-**********
-**********
-**********
-**********
-**********
-""" # Pentominoes, should be 2339 solutions
-
-}
-
-def models (name):
-
-    if name in model_dict:
-        return model_dict[name]
-    else:
-        return None
-
-def string_to_coords (strng):
+def string_convert (strng, to_bits=False):
     """
-Convert string to tuple of coordinates
+Convert string to tuple of coordinates or of 1/0
 """
     nplanes = 0
     plane = 0
     nrows = 0
     ncells = 0
+    cell = 0
     for c in strng.strip()+"\n":
         if c == "\n":
             nrows += 1
-            if plane >= nplanes and ncells > 0:
+            if plane >= nplanes and cell > 0:
                 nplanes = plane + 1
             plane = 0
+            if cell > ncells:
+                ncells = cell
+            cell = 0
         elif c == "/":
             plane += 1
+            if cell > ncells:
+                ncells = cell
+            cell = 0
         elif c == "*" or c == ".":
-            ncells += 1
+            cell += 1
 
-    cl = []
+    cl = [[[0 for _ in range(ncells)] for _ in range(nrows)] for _ in range(nplanes)] if to_bits else []
     plane = nplanes-1
     row = nrows-1
     cell = 0
@@ -921,13 +639,69 @@ Convert string to tuple of coordinates
         elif c == "/":
             plane -= 1
             cell = 0
-        elif c == "*" or c == ".":
-            if c == "*":
+        elif c == "*":
+            if to_bits:
+                cl[nplanes-1-plane][nrows-1-row][cell] = 1
+            else:
                 cl.append((cell, row, plane))
             cell += 1
+        elif c == ".":
+            cell += 1
 
-    return tuple(cl)
+    if to_bits:
+        return tuple(tuple(tuple(cl[p][r][c] for c in range(ncells)) for r in range(nrows)) for p in range(nplanes))
+    else:
+        return tuple(cl)
 
+def readpuzzles (filename):
+    try:
+        f = open (filename, "r")
+    except:
+        print (f"Could not read {filename}")
+        return None
+
+    puzzlename = ""
+    desc = ""
+    defmodel = ""
+    piecename = ""
+    strng = ""
+    pieces = {}
+    pdict = {}
+    for l in f:
+        ls = l.strip()
+        if ls == "-":   # end of puzzle
+            if strng != "":
+                pieces[piecename] = string_convert(strng, True)
+            pdict[puzzlename] = Puzzle(desc, defmodel, pieces)
+            puzzlename = ""
+            desc = ""
+            defmodel = ""
+            piecename = ""
+            strng = ""
+            pieces = {}
+        elif ls == "":  # end of piece if strng not empty
+            if strng == "":
+                continue
+            pieces[piecename] = string_convert(strng, True)
+            piecename = ""
+            strng = ""
+        elif puzzlename == "":
+            puzzlename = ls
+        elif desc == "":
+            desc = ls
+        elif defmodel == "":
+            defmodel = ls
+        elif piecename == "":
+            piecename = ls
+        else:
+            strng += l
+
+    if strng != "":
+        pieces[piecename] = string_convert(strng, True)
+        pdict[puzzlename] = Puzzle(desc, defmodel, pieces)
+
+    return pdict
+        
 def readmodels (filename):
     try:
         f = open (filename, "r")
@@ -942,8 +716,7 @@ def readmodels (filename):
         if ls == "":
             if strng == "":
                 continue
-            #print (f"&&&&&&{modelname}\n{strng}")
-            yield [modelname, string_to_coords(strng)]
+            yield [modelname, string_convert(strng)]
             modelname = ""
             strng = ""
         elif modelname == "":
@@ -956,16 +729,7 @@ def readmodels (filename):
             strng += l
             
     if strng != "":
-        #print (f"&&&&&&{modelname}\n{strng}")
-        yield [modelname, string_to_coords(strng)]
-
-def parsemodel (modelname):
-    mdl = models (modelname)
-    if mdl == None:
-        print (f"Unknown model {modelname}")
-        return
-
-    return string_to_coords (mdl)
+        yield [modelname, string_convert(strng)]
 
 def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output_file, output_format, quiet):
     puzzle = puzzle_dict[puzzle_name]
@@ -993,7 +757,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
     solver = Solver(volume=volume, puzzle=puzzle)
             
-    if (not quiet) or ofn:
+    if (not quiet) or output_file:
         if output_format == "txt":
             solver.print_volume(solver.start_volume, file=output_file)
     try:
@@ -1006,7 +770,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
     if output_format == "txt":
         print(file=output_file)
 
-    if (not quiet) or ofn:
+    if (not quiet) or output_file:
         i = 0
         sarr = []
         for s in solver.solutions:
@@ -1031,11 +795,14 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
 def main():
 
+    global puzzle_dict
+    
     parser = argparse.ArgumentParser()
 
     parser.add_argument (
         '-i', '--input_file',
         type=str,
+        default="models.txt",
         help="File with model(s) to be solved")
 
     parser.add_argument (
@@ -1083,6 +850,7 @@ def main():
     args = parser.parse_args()
 
     puzzle_name = args.puzzle
+    puzzle_dict = readpuzzles("puzzles.txt")
     if puzzle_name == None:
         for p in puzzle_dict:
             print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes, default model {puzzle_dict[p].defmodel})")
@@ -1091,7 +859,7 @@ def main():
         print (f"Unknown puzzle {puzzle_name}")
         return
     puzzle = puzzle_dict[puzzle_name]
-
+    
     notation = {}
     colors = {}
     if puzzle_name == "soma" or puzzle_name == "double_soma":
@@ -1137,12 +905,8 @@ def main():
     coords = []
 
     if args.model == None:  # -m with no argument, list models
-        if args.input_file:
-            for [m, coords] in readmodels (args.input_file):
-                print (f"  {m}")
-        else:
-            for m in model_dict:
-                print (f"  {m}")
+        for [m, coords] in readmodels (args.input_file):
+            print (f"  {m}")
         return
 
     ofn = args.output_file
@@ -1161,26 +925,23 @@ def main():
             print (f"*** Cannot open output file {ofn}")
 
     
-    if args.input_file:
-        found = False
-        for [modelname, coords] in readmodels (args.input_file):
-            if coords == None:
-                return
-            if args.model == '_def' or args.model == modelname:
-                solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
-                found = True
-        if not found:
-            if args.model == None:
-                print ("*** No model found in {args.input_file}")
-            else:
-                print (f"*** '{args.model}' not found in {args.input_file}")
-    else:
-        modelname = puzzle.defmodel if args.model == "_def" else args.model
-        coords = parsemodel (modelname)
-        solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
+    found = False
+    targetmodel = puzzle_dict[puzzle_name].defmodel if args.model == '_def' else args.model
+    for [modelname, coords] in readmodels (args.input_file):
+        if coords == None:
+            return
+        if targetmodel == '*' or targetmodel == modelname:
+            solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
+            found = True
+    if not found:
+        if args.model == None:
+            print ("*** No model found in {args.input_file}")
+        else:
+            print (f"*** '{targetmodel}' not found in {args.input_file}")
 
     if ofn:
         of.close()
         
 if __name__ == "__main__":
     main()
+    

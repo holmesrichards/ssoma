@@ -31,11 +31,12 @@ options:
   -c, --colors          Colorize model printouts when possible
   -s, --stop            Stop after first solution found
   -q, --quiet           Do not show solutions
+
 ```
 
 ### Puzzles
 
-Puzzles that can be specified with the `-p` argument are:
+Puzzle can be specified with the `-p` argument; they are defined in the file `puzzles.txt`:
 ```
   soma            Soma Cube (by Piet Hein) (27 cubes)
   double_soma     2 sets Soma Cube (54 cubes)
@@ -50,17 +51,12 @@ Puzzles that can be specified with the `-p` argument are:
 
 ### Models to solve
 
-If the `-i` option is not used to specify an input file:
+Model(s) to solve are read from the input file specified or the default `models.txt`.
 
-* If the `-m` option is given with a model name, then the builtin model with the given name is solved.
-* If the `-m` option is given with no model name, the available builtin model names are listed.
-* If the `-m` option is not given, the builtin default model is solved.
-
-If the `-i` option is used to specify an input file:
-
-* If the `-m` option is given with a model name, then the model from the specified input file with the given name is solved.
-* If the `-m` option is given with no model name, the available model names from the input file are listed.
-* If the `-m` option is not given, all the models from the specified input file are solved.
+* If the `-m` option is not given, the default model for the selected puzzle is solved.
+* If the `-m` option is given with '*' for a model name, then all the models are solved.
+* If the `-m` option is given with a model name, then the model with the given name is solved.
+* If the `-m` option is given with no model name, the available model names are listed.
 
 ### Notations
 
@@ -97,7 +93,7 @@ For Pentominoes, there are two notations:
 
 ## Input
 
-The model can be specified in an input file, looking like this:
+The models are specified in an input file, looking like this:
 ```
 Model name
 
