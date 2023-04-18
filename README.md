@@ -49,6 +49,8 @@ Puzzle can be specified with the `-p` argument; they are defined in the file `pu
 ```
 (`conway` is included mainly just to show how bad brute force is for it! I have not had the patience to run it long enough for it to find a solution.)
 
+If `-p` is used with no puzzle name, available puzzles are listed.
+
 ### Models to solve
 
 Model(s) to solve are read from the input file specified or the default `models.txt`.
@@ -60,7 +62,9 @@ Model(s) to solve are read from the input file specified or the default `models.
 
 ### Notations
 
-For Soma, notations that can be specified with the `-n` argument are as follows:
+Puzzle definitions have a default notation built in but alternate notations can be chosen with the `-n` argument. These, and corresponding color definitions, are specified in the `notation.json` file.
+
+For Soma, notations are as follows:
 
 | Numeric | SOMAP (from Soma Addict) | Winning Ways (from Berlecamp, Conway, and Guy)  |
 |----|----|----|
@@ -93,7 +97,7 @@ For Pentominoes, there are two notations:
 
 ## Input
 
-The models are specified in an input file, looking like this:
+The model input file, looks like this:
 ```
 Model name
 

@@ -1,0 +1,101 @@
+{
+    "soma":
+    {
+	"default": "ww",
+	"ww":
+	{
+	    "notation": {},
+	    "colors":
+	    {
+		"W": ["white", "on_grey"],
+		"Y": ["yellow", "on_white"],
+		"G": ["green", "on_white"],
+		"O": ["yellow", "on_grey"],
+		"L": ["blue", "on_white"],
+		"R": ["red", "on_white"],
+		"B": ["grey", "on_white"]
+	    }
+	},
+	"somap":
+	{
+	    "notation": {"W": "B", "L": "U", "B": "A"},
+	    "colors":
+	    {
+		"W": ["magenta", "on_grey"],
+		"Y": ["yellow", "on_white"],
+		"G": ["green", "on_white"],
+                "O": ["yellow", "on_grey"],
+		"L": ["blue", "on_white"],
+		"R": ["red", "on_white"],
+                "B": ["grey", "on_white"]
+	    }
+	},
+	"num":
+	{
+	    "notation": {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7"}
+	}
+    },
+    "double_soma":
+    {
+	"default": "ww",
+	"ww":
+	{
+	    "notation": {},
+	    "colors":
+	    {
+		"W": ["white", "on_grey"],
+		"Y": ["yellow", "on_white"],
+		"G": ["green", "on_white"],
+		"O": ["yellow", "on_grey"],
+		"L": ["blue", "on_white"],
+		"R": ["red", "on_white"],
+		"B": ["grey", "on_white"],
+		"w": ["white", "on_grey"],
+		"y": ["yellow", "on_white"],
+		"g": ["green", "on_white"],
+		"o": ["yellow", "on_grey"],
+		"l": ["blue", "on_white"],
+		"r": ["red", "on_white"],
+		"b": ["grey", "on_white"]
+	    }
+	},
+	"somap":
+	{
+	    "notation": {"W": "B", "L": "U", "B": "A", "w": "b", "l": "u", "b": "a"},
+	    "colors":
+	    {
+		"W": ["magenta", "on_grey"],
+		"Y": ["yellow", "on_white"],
+		"G": ["green", "on_white"],
+                "O": ["yellow", "on_grey"],
+		"L": ["blue", "on_white"],
+		"R": ["red", "on_white"],
+                "B": ["grey", "on_white"],
+		"w": ["magenta", "on_grey"],
+		"y": ["yellow", "on_white"],
+		"g": ["green", "on_white"],
+                "o": ["yellow", "on_grey"],
+		"l": ["blue", "on_white"],
+		"r": ["red", "on_white"],
+                "b": ["grey", "on_white"]
+	    }
+	},
+	"num":
+	{
+	    "notation": {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7",
+			 "w": "1", "y": "2", "g": "3", "o": "4", "l": "5", "r": "6", "b": "7"}
+	}
+    },
+    "pentominoes":
+    {
+	"default": "gol",
+	"gol":
+	{
+	    "notation": {}
+	},
+	"con":
+	{
+	    "notation": {"F": "R", "I": "O", "L": "Q", "N": "S"}
+	}
+    }
+}

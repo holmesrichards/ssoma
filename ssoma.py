@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-Soma Cube solver by Rich Holmes
+Soma Cube (and other polycube dissections) solver by Rich Holmes
 derived from Pentominos solver by MiniMax
 https://codereview.stackexchange.com/questions/233300/solving-pentomino-puzzles-by-using-knuths-algorithm-x
 
@@ -814,8 +814,8 @@ def main():
         '-p', '--puzzle',
         type=str,
         nargs="?",
-        default = "soma",
-        help="Puzzle to be used, default = 'soma'; list puzzles if no argument")
+        default = "_def",
+        help="Puzzle to be used; list puzzles if no argument")
 
     parser.add_argument (
         '-m', '--model',
@@ -849,58 +849,51 @@ def main():
 
     args = parser.parse_args()
 
-    puzzle_name = args.puzzle
+    # Get puzzle definition from text file
+    
     puzzle_dict = readpuzzles("puzzles.txt")
-    if puzzle_name == None:
+    if args.puzzle == None:
         for p in puzzle_dict:
             print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes, default model {puzzle_dict[p].defmodel})")
         return
-    elif puzzle_name not in puzzle_dict:
-        print (f"Unknown puzzle {puzzle_name}")
+    elif args.puzzle == "_def":
+        puzzle_name = "soma" if "soma" in puzzle_dict else puzzle_dict.keys()[0]
+    elif args.puzzle in puzzle_dict:
+        puzzle_name = args.puzzle
+    else:
+        print (f"Unknown puzzle {args.puzzle}")
         return
     puzzle = puzzle_dict[puzzle_name]
     
+    try:
+        nf = open("notation.json", "r")
+    except:
+        print ("*** Cannot read notations.json file")
+        nf = None
+
+    # Get notation and colors from json file
+    
+    notation_json = json.load(nf) if nf else None
+        
     notation = {}
     colors = {}
-    if puzzle_name == "soma" or puzzle_name == "double_soma":
-        notation_name = "ww" if args.notation == None else args.notation
-        notation = {}
-        if args.colors:
-            colors = {"W": ["white", "on_grey"], "Y": ["yellow", "on_white"], "G": ["green", "on_white"],
-                      "O": ["yellow", "on_grey"], "L": ["blue", "on_white"], "R": ["red", "on_white"],
-                      "B": ["grey", "on_white"],
-                      "w": ["white", "on_grey"], "y": ["yellow", "on_white"], "g": ["green", "on_white"],
-                      "o": ["yellow", "on_grey"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
-                      "b": ["grey", "on_white"],
-                      }
-        if notation_name == 'num':
-            notation = {"W": "1", "Y": "2", "G": "3", "O": "4", "L": "5", "R": "6", "B": "7",
-                        "w": "1", "y": "2", "g": "3", "o": "4", "l": "5", "r": "6", "b": "7"}
-        elif notation_name == 'somap':
-            notation = {"W": "B", "L": "U", "B": "A",
-                        "w": "b", "l": "u", "b": "a"}
-            if args.colors:
-                colors = {"W": ["magenta", "on_grey"], "Y": ["yellow", "on_white"], "G": ["green", "on_white"],
-                          "O": ["yellow", "on_grey"], "L": ["blue", "on_white"], "R": ["red", "on_white"],
-                          "B": ["grey", "on_white"],
-                          "w": ["magenta", "on_grey"], "y": ["yellow", "on_white"], "g": ["green", "on_white"],
-                          "o": ["yellow", "on_white"], "l": ["blue", "on_white"], "r": ["red", "on_white"],
-                          "b": ["grey", "on_white"],
-                          }
-        elif notation_name == "ww":
-            pass
+    anot = args.notation
+    
+    if notation_json and puzzle_name in notation_json:
+        pn = notation_json[puzzle_name]
+        if anot:
+            if anot in pn:
+                notation_name = anot
+            else:
+                print (f"*** Unrecognized notation '{anot}' for puzzle '{puzzle_name}' ignored")
+                notation_name = None
         else:
-            print (f"*** Unrecognized notation '{notation_name}' ignored")
-    elif puzzle_name == "pentominoes":
-        notation_name = "gol" if args.notation == None else args.notation
-        if notation_name == 'con':
-            notation = {"F": "R", "I": "O", "L": "Q", "N": "S"}
-        elif notation_name == "gol":
-            notation = {}
-        else:
-            print (f"*** Unrecognized notation '{notation_name}' ignored")
+            notation_name = pn["default"] if "default" in pn else None
+        if notation_name:
+            notation = pn[notation_name]["notation"] if "notation" in pn[notation_name] else {}
+            colors = pn[notation_name]["colors"] if args.colors and "colors" in pn[notation_name] else {}
 
-    # Convert pattern to cartesian coordinates
+    # Get model from text file, convert to cartesian coordinates and solve
 
     coords = []
 
@@ -941,6 +934,7 @@ def main():
 
     if ofn:
         of.close()
+
         
 if __name__ == "__main__":
     main()
