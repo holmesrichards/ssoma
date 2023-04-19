@@ -97,7 +97,7 @@ For Pentominoes, there are two notations:
 
 ## Input
 
-The model input file, looks like this:
+The model input file looks like this:
 ```
 Model name
 
