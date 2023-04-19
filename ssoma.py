@@ -597,23 +597,34 @@ Convert string to tuple of coordinates or of 1/0
     nrows = 0
     ncells = 0
     cell = 0
+    empty_row  = True
+    empty_planes = 0
     for c in strng.strip()+"\n":
         if c == "\n":
             nrows += 1
-            if plane >= nplanes and cell > 0:
-                nplanes = plane + 1
-            plane = 0
-            if cell > ncells:
+            if empty_row:
+                empty_planes += 1
+            elif cell > ncells:
                 ncells = cell
+            if plane-empty_planes >= nplanes:
+                nplanes = plane - empty_planes + 1
+            plane = 0
+            empty_row = True
             cell = 0
         elif c == "/":
             plane += 1
-            if cell > ncells:
+            if empty_row:
+                empty_planes += 1
+            elif cell > ncells:
                 ncells = cell
+            empty_row = True
             cell = 0
         elif c == "*" or c == ".":
             cell += 1
-
+            if c == "*":
+                empty_row = False
+                empty_planes = 0
+                
     cl = [[[0 for _ in range(ncells)] for _ in range(nrows)] for _ in range(nplanes)] if to_bits else []
     plane = nplanes-1
     row = nrows-1
