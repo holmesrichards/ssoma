@@ -588,19 +588,6 @@ class Solver():
     def rotatex(self, fig):
         return tuple(tuple(zip(*fig[i][::-1])) for i in range(len(fig)))
 
-# Some models to build
-
-# In these patterns each entry is a set of rows, with vertically
-# aligned rows forming a plane
-# Number of entries is depth, entries in each entry is height,
-# len of each string is width.
-# x increases across len of string
-# y decreases across pattern
-# z decreases across row_set
-# So what you see here is the top plane on the left, bottom plane
-# on the right.
-
-
 def string_convert (strng, to_bits=False):
     """
 Convert string to tuple of coordinates or of 1/0
