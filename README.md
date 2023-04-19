@@ -66,7 +66,7 @@ Puzzle definitions have a default notation built in but alternate notations can 
 
 For Soma, notations are as follows:
 
-| Numeric | SOMAP (from Soma Addict) | Winning Ways (from Berlecamp, Conway, and Guy)  |
+| Numeric<br/>`-n num` | SOMAP (from Soma Addict)<br/>`-n somap` | Winning Ways (from Berlecamp, Conway, and Guy)<br/>`-n ww`  |
 |----|----|----|
 | 1  | B = Brown | W = White |
 | 2  | Y = Yellow | Y = Yellow |
@@ -80,7 +80,7 @@ For double set Soma puzzles, alphabetic notation is repeated with lowercase lett
 
 For Pentominoes, there are two notations:
 
-|Golomb|Conway|
+|Golomb<br/>`-n gol`|Conway<br/>`-n con`|
 |----|----|
 |F|R|
 |I|O|
