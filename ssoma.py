@@ -686,6 +686,7 @@ def readpuzzles (filename):
 
     if strng != "":
         pieces[piecename] = string_convert(strng, True)
+    if puzzlename != "":
         pdict[puzzlename] = Puzzle(desc, defmodel, pieces)
 
     return pdict
