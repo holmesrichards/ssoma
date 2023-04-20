@@ -258,79 +258,6 @@ class Solver():
 
     def find_solutions(self, stop=False):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
-
-        # If this is 3x3x3 then count cubes
-        if self.width == 3 and self.depth == 3 and self.height == 3:
-            pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
-            vefcs = {}
-            cube_type = \
-            [
-                [
-                    [0, 1, 0],
-                    [1, 2, 1],
-                    [0, 1, 0]
-                ],
-                [
-                    [1, 2, 1],
-                    [2, 3, 2],
-                    [1, 2, 1]
-                ],
-                [
-                    [0, 1, 0],
-                    [1, 2, 1],
-                    [0, 1, 0]
-                ]
-            ]
-            for g in pos_gen:
-                if g[0] == 0:
-                    continue
-                vefc = [0, 0, 0, 0]
-                for row in range(3):
-                    for plane in range(3):
-                        for cell in range(3):
-                            gcrp = g[1+cell+self.width*(row+self.depth*plane)]
-                            vefc[cube_type[cell][row][plane]] += gcrp
-                if g[0] in vefcs:
-                    if vefc not in vefcs[g[0]]:
-                        vefcs[g[0]].append(vefc)
-                else:
-                    vefcs[g[0]] = [vefc]
-                
-            pick = [0 for _ in range(len(vefcs.keys()))]
-            vefca = [vefcs[k] for k in sorted(vefcs.keys())]
-            labels = sorted(vefcs.keys())
-
-            possibles = []
-            while True:
-                j = len(vefca)-1
-                while pick[j] == len(vefca[j])-1:
-                    pick[j] = 0
-                    j -= 1
-                    if j < 0:
-                        break
-                if j < 0:
-                    break
-                pick[j] += 1
-                sum = [0, 0, 0, 0]
-                for j in range(len(vefca)):
-                    for i in range(len(sum)):
-                        sum[i] += vefca[j][pick[j]][i]
-                if sum == [8, 12, 6, 1]:
-                    possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
-
-            print ("*** Cube counting results:")
-            for j in range (len(vefca)):
-                print (f"For {labels[j]} central:")
-                n = 0
-                for p in possibles:
-                    if p[j][3] == 1:
-                        n += 1
-                        print ("   ", end="")
-                        for jj in range (len(vefca)):
-                            print (f"{labels[jj]}: {p[jj]}", end=" ")
-                        print()
-                if n == 0:
-                    print ("   Not possible")
     
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
         for line in pos_gen:
@@ -343,6 +270,69 @@ class Solver():
         self.prevtime = self.starttime
         self.dlx_alg(self.llist, self.start_volume, stop)
 
+    def cube_counting(self):
+        # If this is 3x3x3 then count cubes
+        if self.width != 3 or self.depth != 3 or self.height != 3:
+            return
+        pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
+        vefcs = {}
+        cube_type = \
+        [
+            [
+                [0, 1, 0],
+                [1, 2, 1],
+                [0, 1, 0]
+            ],
+            [
+                [1, 2, 1],
+                [2, 3, 2],
+                [1, 2, 1]
+            ],
+            [
+                [0, 1, 0],
+                [1, 2, 1],
+                [0, 1, 0]
+            ]
+        ]
+        for g in pos_gen:
+            if g[0] == 0:
+                continue
+            vefc = [0, 0, 0, 0]
+            for row in range(3):
+                for plane in range(3):
+                    for cell in range(3):
+                        gcrp = g[1+cell+self.width*(row+self.depth*plane)]
+                        vefc[cube_type[cell][row][plane]] += gcrp
+            if g[0] in vefcs:
+                if vefc not in vefcs[g[0]]:
+                    vefcs[g[0]].append(vefc)
+            else:
+                vefcs[g[0]] = [vefc]
+
+        pick = [0 for _ in range(len(vefcs.keys()))]
+        vefca = [vefcs[k] for k in sorted(vefcs.keys())]
+        labels = sorted(vefcs.keys())
+
+        possibles = []
+        while True:
+            j = len(vefca)-1
+            while pick[j] == len(vefca[j])-1:
+                pick[j] = 0
+                j -= 1
+                if j < 0:
+                    break
+            if j < 0:
+                break
+            pick[j] += 1
+            sum = [0, 0, 0, 0]
+            for j in range(len(vefca)):
+                for i in range(len(sum)):
+                    sum[i] += vefca[j][pick[j]][i]
+            if sum == [8, 12, 6, 1]:
+                possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
+
+        return [vefca, labels, possibles]
+        
     # Converts a one dimensional's element index to two dimensional's coordinates
     def num_to_coords(self, num):
         plane = num // (self.depth * self.width)
@@ -845,6 +835,12 @@ def main():
         help = "Do not show solutions"
         )
 
+    parser.add_argument (
+        '-cc', '--cube_counting',
+        action = "store_true",
+        help = "Do cube counting for 3x3x3 cube and exit"
+        )
+    
     args = parser.parse_args()
 
     # Get puzzle definition from text file
@@ -902,7 +898,7 @@ def main():
 
     ofn = args.output_file
     ofform = "json" if ofn and ofn[-5:] == ".json" \
-        else ("txt" if ofn and ofn[-4:] == ".txt" \
+        else ("txt" if not ofn or ofn[-4:] == ".txt" \
               else "")
     if ofn and ofform == "":
         print (f"** Unrecognized output file type {ofn}")
@@ -915,6 +911,37 @@ def main():
         except:
             print (f"*** Cannot open output file {ofn}")
 
+    if args.cube_counting:
+        puzzle = puzzle_dict[puzzle_name]
+        if puzzle.ncubes != 27:
+            print ("*** Not a 27 cube puzzle")
+            return
+
+        solver = Solver(height=3, depth=3, width=3, puzzle=puzzle)
+        [vefca, labels, possibles] = solver.cube_counting()
+        if ofform == "txt":
+            print ("*** Piece positions:", file=of)
+            for j in range (len(vefca)):
+                print (f"{labels[j]}: {', '.join([str(v) for v in vefca[j]])}", file=of)
+            print ("\n*** Position combinations:", file=of)
+            for j in range (len(vefca)):
+                print (f"For {labels[j]} central:", file=of)
+                n = 0
+                for p in possibles:
+                    if p[j][3] == 1:
+                        n += 1
+                        print ("   ", end="")
+                        for jj in range (len(vefca)):
+                            print (f"{labels[jj]}: {p[jj]}", end=" ", file=of)
+                        print(file=of)
+                if n == 0:
+                    print ("   Not possible", file=of)
+        elif ofform == "json":
+            json.dump(labels, of)
+            json.dump(vefca, of)
+            json.dump(possibles, of)
+            
+        return
     
     found = False
     targetmodel = puzzle_dict[puzzle_name].defmodel if args.model == '_def' else args.model

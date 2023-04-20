@@ -31,6 +31,7 @@ options:
   -c, --colors          Colorize model printouts when possible
   -s, --stop            Stop after first solution found
   -q, --quiet           Do not show solutions
+  -cc, --cube_counting  Do cube counting for 3x3x3 cube and exit
 
 ```
 
@@ -94,6 +95,37 @@ For Pentominoes, there are two notations:
 |X|X|
 |Y|Y|
 |Z|Z|
+
+## Cube counting
+
+If the `-cc` option is used and the specified puzzle has pieces totalling 27 cubes, then cube counting is done instead of any solving. Output (in the case of the Mikusiński Cube) looks like:
+
+```
+*** Piece positions:
+a: [1, 1, 2, 1], [0, 3, 2, 0], [0, 2, 2, 1]
+b: [2, 2, 1, 0], [1, 3, 1, 0], [0, 3, 2, 0], [1, 1, 2, 1]
+c: [1, 2, 1, 1], [0, 1, 3, 1], [2, 2, 1, 0], [0, 3, 2, 0]
+d: [1, 2, 1, 0], [0, 2, 2, 0], [1, 1, 1, 1], [0, 1, 2, 1]
+e: [2, 2, 0, 0], [0, 2, 2, 0], [1, 2, 1, 0], [0, 1, 2, 1]
+f: [1, 1, 1, 1], [0, 2, 2, 0], [0, 1, 2, 1], [1, 2, 1, 0]
+
+*** Position combinations:
+For a central:
+   a: [1, 1, 2, 1] b: [1, 3, 1, 0] c: [2, 2, 1, 0] d: [1, 2, 1, 0] e: [2, 2, 0, 0] f: [1, 2, 1, 0] 
+   a: [0, 2, 2, 1] b: [2, 2, 1, 0] c: [2, 2, 1, 0] d: [1, 2, 1, 0] e: [2, 2, 0, 0] f: [1, 2, 1, 0] 
+For b central:
+   Not possible
+For c central:
+   Not possible
+For d central:
+   a: [0, 3, 2, 0] b: [2, 2, 1, 0] c: [2, 2, 1, 0] d: [1, 1, 1, 1] e: [2, 2, 0, 0] f: [1, 2, 1, 0] 
+For e central:
+   Not possible
+For f central:
+   a: [0, 3, 2, 0] b: [2, 2, 1, 0] c: [2, 2, 1, 0] d: [1, 2, 1, 0] e: [2, 2, 0, 0] f: [1, 1, 1, 1] 
+```
+
+Groups of four numbers in brackets refer to number of vertex, edge, face, and central cubes occupied by a given piece in a given position. "Piece positions" shows all positions each piece can occupy in a 3x3x3 cube. "Position combinations" shows all valid combinations of positions of all pieces, with the requirement everything add up to [8, 12, 6, 1]. Not all piece positions appear in valid combinations, and not all valid combinations occur in actual solutions.
 
 ## Input
 
