@@ -270,30 +270,31 @@ class Solver():
         self.prevtime = self.starttime
         self.dlx_alg(self.llist, self.start_volume, stop)
 
-    def cube_counting(self):
-        # If this is 3x3x3 then count cubes
+    cube_type = \
+    [
+        [
+            [0, 1, 0],
+            [1, 2, 1],
+            [0, 1, 0]
+        ],
+        [
+            [1, 2, 1],
+            [2, 3, 2],
+            [1, 2, 1]
+        ],
+        [
+            [0, 1, 0],
+            [1, 2, 1],
+            [0, 1, 0]
+        ]
+    ]
+
+    def cube_counting_poss(self):
+        # If this is 3x3x3 then count cube possibilities
         if self.width != 3 or self.depth != 3 or self.height != 3:
             return
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
         vefcs = {}
-        cube_type = \
-        [
-            [
-                [0, 1, 0],
-                [1, 2, 1],
-                [0, 1, 0]
-            ],
-            [
-                [1, 2, 1],
-                [2, 3, 2],
-                [1, 2, 1]
-            ],
-            [
-                [0, 1, 0],
-                [1, 2, 1],
-                [0, 1, 0]
-            ]
-        ]
         for g in pos_gen:
             if g[0] == 0:
                 continue
@@ -302,7 +303,7 @@ class Solver():
                 for plane in range(3):
                     for cell in range(3):
                         gcrp = g[1+cell+self.width*(row+self.depth*plane)]
-                        vefc[cube_type[cell][row][plane]] += gcrp
+                        vefc[self.cube_type[cell][row][plane]] += gcrp
             if g[0] in vefcs:
                 if vefc not in vefcs[g[0]]:
                     vefcs[g[0]].append(vefc)
@@ -332,6 +333,20 @@ class Solver():
                 possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
 
         return [vefca, labels, possibles]
+        
+    def cube_counting_act(self, sol):
+        # If this is 3x3x3 then count cube actualities
+        if self.width != 3 or self.depth != 3 or self.height != 3:
+            return
+        vefcs = {}
+        for plane in range(3):
+            for row in range(3):
+                for cell in range(3):
+                    k = sol[cell][row][plane]
+                    if k not in vefcs:
+                        vefcs[k] = [0, 0, 0, 0]
+                    vefcs[k][self.cube_type[cell][row][plane]] += 1
+        return vefcs
         
     # Converts a one dimensional's element index to two dimensional's coordinates
     def num_to_coords(self, num):
@@ -729,9 +744,6 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         if fewmany == "many" or len(coords) == 0:
             return
 
-    if output_format == "txt":
-        print (f"{modelname}\n", file=output_file)
-    
     # Get dimensions of volume
     d = [0, 0, 0]
     for c in coords:
@@ -748,6 +760,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
             
     if (not quiet) or output_file:
         if output_format == "txt":
+            print (f"{modelname}", file=output_file)    
             solver.print_volume(solver.start_volume, file=output_file)
     try:
         solver.find_solutions(stop=stopp)
@@ -756,22 +769,30 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
     n = len(solver.solutions)
     solver.print_progress(f"{modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
-    if output_format == "txt":
-        print(file=output_file)
 
     if (not quiet) or output_file:
         i = 0
         sarr = []
         for s in solver.solutions:
             i += 1
-            if not quiet and output_format == "":
+            vefcs = solver.cube_counting_act(s) if modelname == "Cube3" else None
+            if not quiet:
                 print(f"Solution № {i}")
+                if vefcs:
+                    for k in sorted(vefcs.keys()):
+                        print (f"{k}: {vefcs[k]}", end=" ")
+                    print ()
                 solver.print_volume(s, notation, colors)
-            if output_format == "txt":
-                print(f"Solution № {i}", file=output_file)
-                solver.print_volume(s, notation, colors, file=output_file)
-            elif output_format == "json":
-                sarr.append (s)
+            if output_file != None:
+                if output_format == "txt":
+                    print(f"Solution № {i}", file=output_file)
+                    if vefcs:
+                        for k in sorted(vefcs.keys()):
+                            print (f"{k}: {vefcs[k]}", end=" ", file=output_file)
+                        print (file=output_file)
+                    solver.print_volume(s, notation, colors, file=output_file)
+                elif output_format == "json":
+                    sarr.append (s)
         if i == 0 and output_format == "txt":
             print ("*** No solutions", file=output_file)
         if output_format != "json":
@@ -919,7 +940,7 @@ def main():
             return
 
         solver = Solver(height=3, depth=3, width=3, puzzle=puzzle)
-        [vefca, labels, possibles] = solver.cube_counting()
+        [vefca, labels, possibles] = solver.cube_counting_poss()
         if ofform == "txt":
             print ("*** Piece positions:", file=of)
             for j in range (len(vefca)):
