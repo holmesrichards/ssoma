@@ -29,7 +29,7 @@ options:
   -n NOTATION, --notation NOTATION
                         For soma/double_soma: Use notation 'num' (numeric), 'somap' (SA SOMAP), or 'ww' (Winning Ways, default); for pentominoes: 'gol' (Golomb, default) or 'con' (Conway)
   -c, --colors          Colorize model printouts when possible
-  -s, --stop            Stop after first solution found
+  -s STOP, --stop STOP  Stop after n solutions found
   -q, --quiet           Do not show solutions
   -cc, --cube_counting  Do cube counting for 3x3x3 cube and exit
 
@@ -186,5 +186,5 @@ At end of analysis all solutions are printed, unless the `-q` option is used (pr
 
 Every 5 seconds and at end of analysis a status update line is shown on the terminal. 
 
-You can terminate running with `CTRL-C` and partial results will be shown. The `-s` option will stop analysis and print partial results after the first solution is found.
+You can terminate running with `CTRL-C` and partial results will be shown. The `-s n` option will stop analysis and print partial results after the first `n` solutions are found.
 

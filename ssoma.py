@@ -256,7 +256,7 @@ class Solver():
                   for cell in row) for row in plane) for plane in sol)
         return sol2
 
-    def find_solutions(self, stop=False):
+    def find_solutions(self, stop=None):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
     
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
@@ -411,7 +411,7 @@ class Solver():
                     return
         return 1
 
-    def dlx_alg(self, llist, volume, stop=False):
+    def dlx_alg(self, llist, volume, stop=None):
         self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'' if len(self.solutions) == 1 else 's'} found", 5.0)
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
@@ -457,9 +457,9 @@ class Solver():
                 llist.delete_col(col_node.col_head)
             # Pass the shrinked llist and the volume with the picked piece added
             # to the next processing
-            found = self.dlx_alg(llist, new_volume, stop)
-            if stop and found:
-                return found
+            self.dlx_alg(llist, new_volume, stop)
+            if stop != None and len(self.solutions) >= stop:
+                return
 
             for row in rows_to_restore:
                 llist.insert_row(row)
@@ -660,7 +660,7 @@ def readpuzzles (filename):
     try:
         f = open (filename, "r")
     except:
-        print (f"Could not read {filename}")
+        print (f"*** Could not read {filename}")
         return None
 
     puzzlename = ""
@@ -768,7 +768,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         print ("*** Terminated")
 
     n = len(solver.solutions)
-    solver.print_progress(f"{modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
+    solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
 
     if (not quiet) or output_file:
         i = 0
@@ -804,7 +804,6 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
 
 def main():
-
     global puzzle_dict
     
     parser = argparse.ArgumentParser()
@@ -814,6 +813,12 @@ def main():
         type=str,
         default="models.txt",
         help="File with model(s) to be solved")
+
+    parser.add_argument (
+        '-pi', '--puzzle_input_file',
+        type=str,
+        default="puzzles.txt",
+        help="File with puzzles")
 
     parser.add_argument (
         "-o", '--output_file',
@@ -847,8 +852,8 @@ def main():
 
     parser.add_argument (
         '-s', '--stop',
-        action = "store_true",
-        help = "Stop after first solution found"
+        type = int,
+        help = "Stop after n solutions found"
         )
 
     parser.add_argument (
@@ -866,14 +871,17 @@ def main():
     args = parser.parse_args()
 
     # Get puzzle definition from text file
-    
-    puzzle_dict = readpuzzles("puzzles.txt")
+
+    puzzle_dict = readpuzzles(args.puzzle_input_file if args.puzzle_input_file else "puzzles.txt")
+    if not puzzle_dict:
+        return
+           
     if args.puzzle == None:
         for p in puzzle_dict:
             print (f"  {p:15} {puzzle_dict[p].desc} ({puzzle_dict[p].ncubes} cubes, default model {puzzle_dict[p].defmodel})")
         return
     elif args.puzzle == "_def":
-        puzzle_name = "soma" if "soma" in puzzle_dict else puzzle_dict.keys()[0]
+        puzzle_name = "soma" if "soma" in puzzle_dict else list(puzzle_dict.keys())[0]
     elif args.puzzle in puzzle_dict:
         puzzle_name = args.puzzle
     else:
