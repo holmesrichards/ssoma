@@ -230,9 +230,17 @@ class Solver():
         for p1 in self.named_pieces:
             for p2 in self.all_piece_postures:
                 if p1[1] == p2[1]:
-                    if p1[0] not in spc or \
-                       p2[0] < spc[p1[0]]:
-                        spc[p1[0]] = p2[0]
+                    if p1[0] not in spc:
+                        spc[p1[0]] = [p2[0]]
+                    elif p2[0] not in spc[p1[0]]:
+                        spc[p1[0]].append(p2[0])
+        sk = list(spc.keys())
+        for k in sk:
+            if len(spc[k]) == 1:
+                del spc[k]
+            else:
+                spc[k].sort()
+
         return spc
 
     def get_piece_mirrors(self):
@@ -250,10 +258,24 @@ class Solver():
 
     def reduce_solution(self, sol):
         """
-        Replace each piece in sol with its canonical identical piece
+        Replace each piece in sol with an identical piece in canonical order
         """
-        sol2 = tuple(tuple(tuple(cell if cell not in self.piece_copies else self.piece_copies[cell] \
-                  for cell in row) for row in plane) for plane in sol)
+        dct = {}
+        s = [[['.' for cell in row] for row in plane] for plane in sol]
+        for ic in range(len(sol)):
+            for ir in range(len(sol[0])):
+                for ip in range(len(sol[0][0])):
+                    cell = sol[ip][ir][ic]
+                    if cell not in self.piece_copies:
+                        s[ip][ir][ic] = cell
+                    else:
+                        if cell not in dct:
+                            for d in self.piece_copies[cell]:
+                                if d not in dct.values():
+                                    dct[cell] = d
+                                    break
+                        s[ip][ir][ic] = dct[cell]
+        sol2 = tuple(tuple(tuple(cell for cell in row) for row in plane) for plane in s)
         return sol2
 
     def find_solutions(self, stop=None):
@@ -303,7 +325,7 @@ class Solver():
                 for plane in range(3):
                     for cell in range(3):
                         gcrp = g[1+cell+self.width*(row+self.depth*plane)]
-                        vefc[self.cube_type[cell][row][plane]] += gcrp
+                        vefc[self.cube_type[plane][row][cell]] += gcrp
             if g[0] in vefcs:
                 if vefc not in vefcs[g[0]]:
                     vefcs[g[0]].append(vefc)
@@ -342,7 +364,7 @@ class Solver():
         for plane in range(3):
             for row in range(3):
                 for cell in range(3):
-                    k = sol[cell][row][plane]
+                    k = sol[plane][row][cell]
                     if k not in vefcs:
                         vefcs[k] = [0, 0, 0, 0]
                     vefcs[k][self.cube_type[cell][row][plane]] += 1
@@ -369,45 +391,43 @@ class Solver():
             self.prevtime = new_time
 
     def check_solution_uniqueness(self, sol):
-        sol = self.reduce_solution(sol)
-
         for sola in [sol, self.reflect(sol)]:
-            if sola in self.reduced_solutions:
+            if self.reduce_solution(sola) in self.reduced_solutions:
                 return
             for _ in range(3):
                 sola = self.rotatez(sola)
-                if sola in self.reduced_solutions:
+                if self.reduce_solution(sola) in self.reduced_solutions:
                     return
             sola = self.rotatez(sola)
 
             for _ in range(3):
                 sola = self.rotatex(sola)
-                if sola in self.reduced_solutions:
+                if self.reduce_solution(sola) in self.reduced_solutions:
                     return
                 for _ in range(3):
                     sola = self.rotatez(sola)
-                    if sola in self.reduced_solutions:
+                    if self.reduce_solution(sola) in self.reduced_solutions:
                         return
                 sola = self.rotatez(sola)
             sola = self.rotatex(sola)
 
             sola = self.rotatez(sola)
             sola = self.rotatex(sola)
-            if sola in self.reduced_solutions:
+            if self.reduce_solution(sola) in self.reduced_solutions:
                 return
             for _ in range(3):
                 sola = self.rotatez(sola)
-                if sola in self.reduced_solutions:
+                if self.reduce_solution(sola) in self.reduced_solutions:
                     return
             sola = self.rotatez(sola)
 
             sola = self.rotatex(sola)
             sola = self.rotatex(sola)
-            if sola in self.reduced_solutions:
+            if self.reduce_solution(sola) in self.reduced_solutions:
                 return
             for _ in range(3):
                 sola = self.rotatez(sola)
-                if sola in self.reduced_solutions:
+                if self.reduce_solution(sola) in self.reduced_solutions:
                     return
         return 1
 
@@ -762,6 +782,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         if output_format == "txt":
             print (f"{modelname}", file=output_file)    
             solver.print_volume(solver.start_volume, file=output_file)
+
     try:
         solver.find_solutions(stop=stopp)
     except:
