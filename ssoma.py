@@ -35,7 +35,6 @@ import argparse
 from termcolor import colored
 import json
 import re
-import traceback
 
 class Node():
     def __init__(self, value):
@@ -787,10 +786,6 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         solver.find_solutions(stop=stopp)
     except KeyboardInterrupt:
         print ("*** Terminated")
-    except Exception as error:
-        print ("*** Terminated: ", error)
-        print(traceback.format_exc())
-        return
 
     n = len(solver.solutions)
     solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
