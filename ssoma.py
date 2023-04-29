@@ -786,10 +786,11 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
     try:
         solver.find_solutions(stop=stopp)
     except KeyboardInterrupt:
-        print ("*** Terminated: ", error)
+        print ("*** Terminated")
     except Exception as error:
         print ("*** Terminated: ", error)
         print(traceback.format_exc())
+        return
 
     n = len(solver.solutions)
     solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
