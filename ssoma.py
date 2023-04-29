@@ -35,7 +35,7 @@ import argparse
 from termcolor import colored
 import json
 import re
-
+import traceback
 
 class Node():
     def __init__(self, value):
@@ -262,9 +262,9 @@ class Solver():
         """
         dct = {}
         s = [[['.' for cell in row] for row in plane] for plane in sol]
-        for ic in range(len(sol)):
+        for ip in range(len(sol)):
             for ir in range(len(sol[0])):
-                for ip in range(len(sol[0][0])):
+                for ic in range(len(sol[0][0])):
                     cell = sol[ip][ir][ic]
                     if cell not in self.piece_copies:
                         s[ip][ir][ic] = cell
@@ -785,8 +785,11 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
     try:
         solver.find_solutions(stop=stopp)
-    except:
-        print ("*** Terminated")
+    except KeyboardInterrupt:
+        print ("*** Terminated: ", error)
+    except Exception as error:
+        print ("*** Terminated: ", error)
+        print(traceback.format_exc())
 
     n = len(solver.solutions)
     solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
