@@ -87,12 +87,6 @@ class Linked_list_2D():
 
         self.size += 1
 
-    def print_list(self, separator=' '):
-        for row in self.traverse_node_line(self.head, "down"):
-            for col in self.traverse_node_line(row, "right"):
-                print(col.value, end=separator)
-            print()
-
     def traverse_node_line(self, start_node, direction):
         cur_node = start_node
         while cur_node:
@@ -277,7 +271,7 @@ class Solver():
         sol2 = tuple(tuple(tuple(cell for cell in row) for row in plane) for plane in s)
         return sol2
 
-    def find_solutions(self, stop=None):
+    def find_solutions(self, ofl, stop=None):
         self.llist = Linked_list_2D(self.height * self.depth * self.width + 1)
     
         pos_gen = self.generate_positions(self.all_piece_postures, self.width, self.depth, self.height)
@@ -289,7 +283,7 @@ class Solver():
 
         self.starttime = time()
         self.prevtime = self.starttime
-        self.dlx_alg(self.llist, self.start_volume, stop)
+        self.dlx_alg(self.llist, self.start_volume, ofl, stop)
 
     cube_type = \
     [
@@ -383,10 +377,10 @@ class Solver():
             if self.start_volume[plane][row][cell]:
                 llist.delete_col(col_head_node)
 
-    def print_progress(self, message, interval, force=False):
+    def print_progress(self, message, interval, ofl, force=False):
         new_time = time()
         if (new_time - self.prevtime) >= interval or force:
-            print(f"Elapsed time: {timedelta(seconds=new_time - self.starttime)} / {message}")
+            print(f"Elapsed time: {timedelta(seconds=new_time - self.starttime)} / {message}", file=ofl)
             self.prevtime = new_time
 
     def check_solution_uniqueness(self, sol):
@@ -430,8 +424,9 @@ class Solver():
                     return
         return 1
 
-    def dlx_alg(self, llist, volume, stop=None):
-        self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'' if len(self.solutions) == 1 else 's'} found", 5.0)
+    def dlx_alg(self, llist, volume, ofl, stop=None):
+        if ofl == None:
+            self.print_progress(f"{self.tried_variants_num} variants have been tried, {len(self.solutions)} solution{'' if len(self.solutions) == 1 else 's'} found", 5.0, None)
         # If no rows left - all pieces are used
         if llist.head.down is llist.head:
             self.tried_variants_num += 1
@@ -476,7 +471,7 @@ class Solver():
                 llist.delete_col(col_node.col_head)
             # Pass the shrinked llist and the volume with the picked piece added
             # to the next processing
-            self.dlx_alg(llist, new_volume, stop)
+            self.dlx_alg(llist, new_volume, ofl, stop)
             if stop != None and len(self.solutions) >= stop:
                 return
 
@@ -502,7 +497,7 @@ class Solver():
                 new_volume[plane][row][cell] = node.row_head.value
         return new_volume
 
-    def print_volume(self, volume, notation={}, colors={}, file=None):
+    def print_volume(self, volume, notation={}, colors={}, output_file=None):
         for y in range (len(volume[0])-1,-1,-1):
             for z in range(len(volume[0][0])-1,-1,-1):
                 for x in range (len(volume)):
@@ -516,10 +511,10 @@ class Solver():
                                 nc = colored (nc, colors[cell][0], colors[cell][1])
                             else:
                                 nc = colored (nc, "grey", "on_white")
-                    print (nc, end="", file=file)
-                print (" / ", end = "", file=file)
-            print (file=file)
-        print(file=file)
+                    print (nc, end="", file=output_file)
+                print (" / ", end = "", file=output_file)
+            print (file=output_file)
+        print(file=output_file)
 
     def unique_piece_postures(self, named_pieces):
         postures = set(named_pieces)
@@ -777,18 +772,17 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
 
     solver = Solver(volume=volume, puzzle=puzzle)
             
-    if (not quiet) or output_file:
-        if output_format == "txt":
-            print (f"{modelname}", file=output_file)    
-            solver.print_volume(solver.start_volume, file=output_file)
+    if output_format == "txt":
+        print (f"{modelname}", file=output_file)
+        solver.print_volume(solver.start_volume, output_file=output_file)
 
     try:
-        solver.find_solutions(stop=stopp)
+        solver.find_solutions(output_file, stop=stopp)
     except KeyboardInterrupt:
         print ("*** Terminated")
 
     n = len(solver.solutions)
-    solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, force=True)
+    solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, output_file, force=True)
 
     if (not quiet) or output_file:
         i = 0
@@ -797,20 +791,13 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
             i += 1
             vefcs = solver.cube_counting_act(s) if modelname == "Cube3" else None
             if not quiet:
-                print(f"Solution № {i}")
-                if vefcs:
-                    for k in sorted(vefcs.keys()):
-                        print (f"{k}: {vefcs[k]}", end=" ")
-                    print ()
-                solver.print_volume(s, notation, colors)
-            if output_file != None:
                 if output_format == "txt":
                     print(f"Solution № {i}", file=output_file)
                     if vefcs:
                         for k in sorted(vefcs.keys()):
                             print (f"{k}: {vefcs[k]}", end=" ", file=output_file)
                         print (file=output_file)
-                    solver.print_volume(s, notation, colors, file=output_file)
+                    solver.print_volume(s, notation, colors, output_file=output_file)
                 elif output_format == "json":
                     sarr.append (s)
         if i == 0 and output_format == "txt":
@@ -980,7 +967,7 @@ def main():
                 for p in possibles:
                     if p[j][3] == 1:
                         n += 1
-                        print ("   ", end="")
+                        print ("   ", end="", file=of)
                         for jj in range (len(vefca)):
                             print (f"{labels[jj]}: {p[jj]}", end=" ", file=of)
                         print(file=of)
