@@ -782,7 +782,9 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         print ("*** Terminated")
 
     n = len(solver.solutions)
-    solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, output_file, force=True)
+
+    if output_format == "txt":
+        solver.print_progress(f"{puzzle_name} / {modelname} / {solver.tried_variants_num} variants have been tried, {n} solution{'' if n == 1 else 's'} found", 5.0, output_file, force=True)
 
     if (not quiet) or output_file:
         i = 0
@@ -804,10 +806,10 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
             print ("*** No solutions", file=output_file)
         if output_format != "json":
             print("#" * 80, file=output_file)
-    if output_format == "json":
-        nsarr = [modelname, coords, puzzle_name, sarr]
-        json.dump(nsarr, output_file)
-        print (file=output_file)
+        if output_format == "json":
+            nsarr = [modelname, coords, puzzle_name, i, sarr]
+            json.dump(nsarr, output_file)
+            print (file=output_file)
 
 
 def main():
@@ -974,9 +976,7 @@ def main():
                 if n == 0:
                     print ("   Not possible", file=of)
         elif ofform == "json":
-            json.dump(labels, of)
-            json.dump(vefca, of)
-            json.dump(possibles, of)
+            json.dump([labels, vefca, possibles], of)
             
         return
     
