@@ -331,6 +331,12 @@ class Solver():
 
         possibles = []
         while True:
+            sum = [0, 0, 0, 0]
+            for j in range(len(vefca)):
+                for i in range(len(sum)):
+                    sum[i] += vefca[j][pick[j]][i]
+            if sum == [8, 12, 6, 1]:
+                possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
             j = len(vefca)-1
             while pick[j] == len(vefca[j])-1:
                 pick[j] = 0
@@ -340,12 +346,6 @@ class Solver():
             if j < 0:
                 break
             pick[j] += 1
-            sum = [0, 0, 0, 0]
-            for j in range(len(vefca)):
-                for i in range(len(sum)):
-                    sum[i] += vefca[j][pick[j]][i]
-            if sum == [8, 12, 6, 1]:
-                possibles.append([vefca[j][pick[j]] for j in range(len(vefca))])
 
         return [vefca, labels, possibles]
         
@@ -807,7 +807,7 @@ def solvepuzzle (modelname, coords, puzzle_name, notation, colors, stopp, output
         if output_format != "json":
             print("#" * 80, file=output_file)
         if output_format == "json":
-            nsarr = [modelname, coords, puzzle_name, i, sarr]
+            nsarr = [modelname, coords, puzzle_name, solver.tried_variants_num, i, sarr]
             json.dump(nsarr, output_file)
             print (file=output_file)
 
