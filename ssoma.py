@@ -325,9 +325,9 @@ class Solver():
             else:
                 vefcs[g[0]] = [vefc]
 
-        pick = [0 for _ in range(len(vefcs.keys()))]
-        vefca = [vefcs[k] for k in sorted(vefcs.keys())]
+        pick = [0 for _ in vefcs.keys()]
         labels = sorted(vefcs.keys())
+        vefca = [vefcs[k] for k in labels]
 
         possibles = []
         while True:
@@ -512,7 +512,8 @@ class Solver():
                             else:
                                 nc = colored (nc, "grey", "on_white")
                     print (nc, end="", file=output_file)
-                print (" / ", end = "", file=output_file)
+                if z > 0:
+                    print (" / ", end = "", file=output_file)
             print (file=output_file)
         print(file=output_file)
 
@@ -982,17 +983,31 @@ def main():
     
     found = False
     targetmodel = puzzle_dict[puzzle_name].defmodel if args.model == '_def' else args.model
-    for [modelname, coords] in readmodels (args.input_file):
-        if coords == None:
-            return
-        if targetmodel == '*' or targetmodel == modelname:
-            solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
-            found = True
-    if not found:
-        if args.model == None:
-            print ("*** No model found in {args.input_file}")
-        else:
-            print (f"*** '{targetmodel}' not found in {args.input_file}")
+    iwid = 0
+    idep = 0
+    ihgt = 0
+    if targetmodel[:5].lower() == 'cube_':
+        print (targetmodel[5:])
+        iwid = int(targetmodel[5:])
+        idep = iwid
+        ihgt = iwid
+    elif targetmodel[:6].lower() == 'brick_':
+        [iwid, idep, ihgt] = [int (x) for x in targetmodel[6:].split("_")]
+    if iwid > 0 and idep > 0 and ihgt > 0:
+        coords = tuple((cell, row, plane) for cell in range(iwid) for row in range(idep) for plane in range(ihgt))
+        solvepuzzle (targetmodel, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
+    else:
+        for [modelname, coords] in readmodels (args.input_file):
+            if coords == None:
+                return
+            if targetmodel == '*' or targetmodel == modelname:
+                solvepuzzle (modelname, coords, puzzle_name, notation, colors, args.stop, of, ofform, args.quiet)
+                found = True
+        if not found:
+            if args.model == None:
+                print ("*** No model found in {args.input_file}")
+            else:
+                print (f"*** '{targetmodel}' not found in {args.input_file}")
 
     if ofn:
         of.close()

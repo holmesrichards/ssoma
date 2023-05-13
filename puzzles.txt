@@ -1,6 +1,6 @@
 soma
 Soma Cube (by Piet Hein)
-Cube3
+Cube_3
 
 W
 
@@ -116,7 +116,7 @@ b
 
 bedlam
 Bedlam Cube (by Bruce Bedlam)
-Cube4
+Cube_4
 
 0
 
@@ -184,7 +184,7 @@ C
 
 diabolical
 Diabolical Cube (pub. by Angelo Lewis)
-Cube3
+Cube_3
 
 2
 
@@ -214,7 +214,7 @@ Cube3
 
 sg
 Slothouber-Graatsma puzzle (by Jan Slothouber and William Graatsma)
-Cube3
+Cube_3
 
 a
 
@@ -262,7 +262,7 @@ i
 
 conway
 Conway puzzle (Blocks-In-a-Box) (by John Conway)
-Cube5
+Cube_5
 
 a
 
@@ -356,7 +356,7 @@ r
 
 pentominoes
 Solid Pentominoes (by Solomon Golomb)
-R06x10
+Brick_6_10_1
 
 F
 
@@ -428,7 +428,7 @@ Z
 
 miku
 J. G. Mikusinski's cube
-Cube3
+Cube_3
 
 a
 
@@ -464,7 +464,7 @@ f
 
 cube_o
 Cube O puzzle by Rich Holmes (2023)
-Cube3
+Cube_3
 
 A
 
