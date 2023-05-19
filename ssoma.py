@@ -567,7 +567,7 @@ class Solver():
                 for f in range(dpth):
                     for c in range(wdth):
                         if posture[r][f][c]:
-                            num = ((r + z) * depth + f + y) * width + x + c
+                            num = ((r + z) * depth + f + y) * width + x + wdth - c - 1
                             if line[num]:
                                 return
                             line[num] = posture[r][f][c]
